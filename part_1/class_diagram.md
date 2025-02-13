@@ -71,24 +71,24 @@ User --o Review : Aggregation
 ### User Entity
 
 Each user has a first name, last name, email, and password
-Users should be able to register, update their profile information, and be deleted.
+Users should be able to register (user), update (user) their profile information, and be deleted (user/admin).
 
 ### Place Entity
 
 Each place has a title, description, price, latitude, and longitude.
 Places are associated with the user who created them.
 Places can have a list of amenities
-Places can be created, updated, deleted, and listed.
+Places can be created (user), updated (user), deleted (user/admin), and listed (user/admin).
 
 ### Review Entity
 
 Each review is associated with a specific place and user, and includes a rating and comment.
-Reviews can be created, updated, deleted, and listed by place.
+Reviews can be created (user), deleted (user/admin), and listed (user/admin) by place.
 
 ### Amenity Entity
 
 Each amenity has a name, and description.
-Amenities can be created, updated, deleted, and listed.
+Amenities can be created (admin), updated (admin), deleted (admin), and listed (user/admin).
 
 ## Relationships
 
