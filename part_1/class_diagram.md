@@ -23,6 +23,7 @@ class Place {
     +String owner
     +String title
     +String description
+    +Obj Address
     +Array amenities
     +Int price
     +Int latitude
