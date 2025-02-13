@@ -6,18 +6,19 @@ A high-level package diagram that illustrates the three-layer architecture of th
 classDiagram
 class PresentationLayer {
     <<Interface>>
-    +User Interface
-    +API Services
+    +Services
+    +API Endpoints
 }
 class BusinessLogicLayer {
-    +User Management
-    +Place Management
-    +Review Management
-    +Amenity Management
+    +UserClass
+    +PlaceClass
+    +ReviewClass
+    +AmenityClass
 }
 class PersistenceLayer {
-    +Database Access
+    +DatabaseAccess
+    +Repository
 }
-PresentationLayer --> BusinessLogicLayer : Facade Pattern
-BusinessLogicLayer --> PersistenceLayer : Database Operations
+PresentationLayer <--> BusinessLogicLayer : Facade Pattern
+BusinessLogicLayer <--> PersistenceLayer : Database Operations
 ```
