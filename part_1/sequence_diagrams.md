@@ -16,9 +16,10 @@ API->>BusinessLogic: Validate and Process Request
 BusinessLogic->>Database: Save Data
 Database-->>BusinessLogic: Confirm Save
 BusinessLogic-->>API: Return Response
-API-->>User: Display Success Msg
+API -->> User: Display Success Msg
 API -->> User: Display form error msg
 API -->> User: Display user exist error msg
+API -->> User: Server errors msgs
 ```
 
 ## Place Creation
@@ -31,16 +32,36 @@ participant BusinessLogic
 participant Database
 
 User->>API: API Call PLACE Create()
-API->>BusinessLogic: Validate and Process Request
+API->>BusinessLogic: Validate Data and POST Request
 BusinessLogic->>Database: Save Data
 Database-->>BusinessLogic: Confirm Save
 BusinessLogic-->>API: Return Response
-API-->>User: Display Success Msg
-API-->>User: Display form error msg
-API-->>User: Display place exist error msg
+API -->> User: Display Success Msg
+API -->> User: Display form error msg
+API -->> User: Display place exist error msg
+API -->> User: Server errors msgs
 ```
 
 ## Review Submission
+
+```mermaid
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+User->>API: API Call REVIEW Create()
+API->>BusinessLogic: Validate Data and POST Request
+BusinessLogic->>Database: Save Data
+Database-->>BusinessLogic: Confirm Save
+BusinessLogic-->>API: Return Response
+API -->> User: Display Success Msg
+API -->> User: Display form error msg
+API -->> User: Server errors msgs
+```
+
+## Fetching a List of Places
 
 ```mermaid
 sequenceDiagram
@@ -54,6 +75,6 @@ API->>BusinessLogic: Validate and Process Request
 BusinessLogic->>Database: Save Data
 Database-->>BusinessLogic: Confirm Save
 BusinessLogic-->>API: Return Response
-API-->>User: Display Success Msg
-API-->>User: Display form error msg
+API -->> User: Display Success Msg
+API -->> User: Display form error msg
 ```
