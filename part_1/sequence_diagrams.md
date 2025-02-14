@@ -45,7 +45,7 @@ sequenceDiagram
   participant BusinessLogic as BusinessLogic
   participant Database as Database
 
-  User ->> UI: input: fname, lname, email, pass
+  User ->> UI: input: title, desc, address, etc.
   UI ->> API: API Call PLACE create()
   API ->> BusinessLogic: Validate Data and POST Request
   BusinessLogic ->> Database: Save Data
