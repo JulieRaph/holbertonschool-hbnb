@@ -115,11 +115,11 @@ sequenceDiagram
   API -->> UI: Return Success Msg
   UI -->> User: Display list of places
   alt List places fails
-    Database ->> Database: if no places
+    <!-- Database ->> Database: if no places
     Database -->> BusinessLogic: Return empty data
     BusinessLogic -->> API: Return Response
     API -->> UI: Return data not found msg
-    UI -->> User: Display places not found
+    UI -->> User: Display places not found -->
     BusinessLogic ->> BusinessLogic: if server fails
     BusinessLogic -->> API: Return Response
     API -->> UI: Return Server errors msgs
