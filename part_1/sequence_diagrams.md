@@ -19,7 +19,7 @@ BusinessLogic-->>API: Return Response
 API -->> User: Display Success Msg
 API -->> User: Display form error msg
 API -->> User: Display user exist error msg
-API -->> User: Server errors msgs
+API -->> User: Display Server errors msgs
 ```
 
 ## Place Creation
@@ -39,7 +39,7 @@ BusinessLogic-->>API: Return Response
 API -->> User: Display Success Msg
 API -->> User: Display form error msg
 API -->> User: Display place exist error msg
-API -->> User: Server errors msgs
+API -->> User: Display Server errors msgs
 ```
 
 ## Review Submission
@@ -58,7 +58,7 @@ Database-->>BusinessLogic: Confirm Save
 BusinessLogic-->>API: Return Response
 API -->> User: Display Success Msg
 API -->> User: Display form error msg
-API -->> User: Server errors msgs
+API -->> User: Display Server errors msgs
 ```
 
 ## Fetching a List of Places
@@ -77,5 +77,5 @@ Database-->>BusinessLogic: Return Data
 BusinessLogic-->>API: Return Response
 API-->>User: Display Success Msg
 API-->>User: Display Data not found msg
-API-->>User: Server errors msgs
+API-->>User: Display Server errors msgs
 ```
