@@ -24,7 +24,7 @@ sequenceDiagram
     UI ->> UI: if form fails
     UI -->> User: Display form error msg
     Database ->> Database: if user exits
-    Database -->> BusinessLogic: Denied Save
+    Database -->> BusinessLogic: Save Denied
     BusinessLogic -->> API: Return Response
     API -->> UI: Return user exist error msg
     UI -->> User: Display user exit msg
@@ -57,7 +57,7 @@ sequenceDiagram
     UI ->> UI: if form fails
     UI -->> User: Display form error msg
     Database ->> Database: if place exits
-    Database -->> BusinessLogic: Denied Save
+    Database -->> BusinessLogic: Save Denied
     BusinessLogic -->> API: Return Response
     API -->> UI: Return place exist error msg
     UI -->> User: Display place exit msg
