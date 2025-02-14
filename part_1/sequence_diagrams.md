@@ -86,7 +86,7 @@ sequenceDiagram
   BusinessLogic -->> API: Return Response
   API -->> UI: Return Success Msg
   UI -->> User: Review creation success
-  alt Place Creation fails
+  alt Review Creation fails
     UI ->> UI: if form fails
     UI -->> User: Display form error msg
     BusinessLogic ->> BusinessLogic: if server fails
@@ -114,7 +114,7 @@ sequenceDiagram
   BusinessLogic -->> API: Return Response
   API -->> UI: Return Success Msg
   UI -->> User: Display list of places
-  alt Place Creation fails
+  alt List places fails
     Database ->> Database: if no places
     Database -->> BusinessLogic: Return empty data
     BusinessLogic -->> API: Return Response
