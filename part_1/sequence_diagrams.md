@@ -21,7 +21,7 @@ sequenceDiagram
   API -->> UI: Return Success Msg
   UI -->> User: User register success
   alt Register fails
-    UI ->> UI: if form fails
+    UI ->> UI: if form input errors
     UI -->> User: Display form error msg
     Database ->> Database: if user exits
     Database -->> BusinessLogic: Save Denied
@@ -54,7 +54,7 @@ sequenceDiagram
   API -->> UI: Return Success Msg
   UI -->> User: Place creation success
   alt Place Creation fails
-    UI ->> UI: if form fails
+    UI ->> UI: if form input errors
     UI -->> User: Display form error msg
     Database ->> Database: if place exits
     Database -->> BusinessLogic: Save Denied
@@ -87,7 +87,7 @@ sequenceDiagram
   API -->> UI: Return Success Msg
   UI -->> User: Review creation success
   alt Review Creation fails
-    UI ->> UI: if form fails
+    UI ->> UI: if form input errors
     UI -->> User: Display form error msg
     BusinessLogic ->> BusinessLogic: if server fails
     BusinessLogic -->> API: Return Response
