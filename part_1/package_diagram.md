@@ -31,7 +31,7 @@ This includes the services and API through which users interact with the system
 ### Business Logic Layer
 This layer contains the core business logic and the models that represent the entities in the system
 
-### Persistance Layer
+### Persistence Layer
 This layer is responsible for data storage and retrieval, interacting directly with the database
 
 ### The Facade Pattern
