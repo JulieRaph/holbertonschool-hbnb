@@ -12,7 +12,7 @@ participant BusinessLogic
 participant Database
 
 User->>API: API Call USER create()
-API->>BusinessLogic: Validate and Process Request
+API->>BusinessLogic: Validate Data and POST Request
 BusinessLogic->>Database: Save Data
 Database-->>BusinessLogic: Confirm Save
 BusinessLogic-->>API: Return Response
@@ -70,11 +70,12 @@ participant API
 participant BusinessLogic
 participant Database
 
-User->>API: API Call REVIEW Create()
-API->>BusinessLogic: Validate and Process Request
-BusinessLogic->>Database: Save Data
-Database-->>BusinessLogic: Confirm Save
+User->>API: API Call PLACE read()
+API->>BusinessLogic: Fetch data
+BusinessLogic->>Database: Request Data
+Database-->>BusinessLogic: Return Data
 BusinessLogic-->>API: Return Response
-API -->> User: Display Success Msg
-API -->> User: Display form error msg
+API-->>User: Display Success Msg
+API-->>User: Display Data not found msg
+API-->>User: Server errors msgs
 ```
