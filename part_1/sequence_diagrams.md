@@ -70,7 +70,7 @@ participant API
 participant BusinessLogic
 participant Database
 
-User->>API: API Call PLACE read()
+User->>API: API Call listPlaces()
 API->>BusinessLogic: Fetch data
 BusinessLogic->>Database: Request Data
 Database-->>BusinessLogic: Return Data
