@@ -52,7 +52,7 @@ Contains the business logic classes (e.g., user.py, place.py).
 
 Where the Facade pattern is implemented, managing the interaction between layers.
 
-#### `app/persistence`
+#### `app/persistence/`
 
 Where the in-memory repository is implemented for testing purpouse before the implementation of a database-backed solution using SQL Alchemy.
 
