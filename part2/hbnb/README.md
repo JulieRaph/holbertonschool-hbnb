@@ -37,19 +37,21 @@ hbnb/
 ## Directories and files
 
 ### `app/`
+---------------------
 
 Contains the core application code
 
 ### `app/api/`
+---------------------
 
 Houses the API endpoints, organized by version (v1/).
 
 ### `app/models/`
+---------------------
 
 Contains the Business Logic Classes
 
 #### class BaseModel:
---------------------------
 
 Attributes:
 * id(UUID4): Unique identifier for each user.
@@ -101,26 +103,32 @@ Attributes:
 
 
 ### `app/services/`
+---------------------
 
 Where the Facade pattern is implemented, managing the interaction between layers.
 
 ### `app/persistence/`
+---------------------
 
 Where the in-memory repository is implemented for testing purpouse before the implementation of a database-backed solution using SQL Alchemy.
 
 ### `run.py`
+---------------------
 
 The entry point for running the Flask application.
 
 ### `config.py`
+---------------------
 
 Used for configuring environment variables and application settings.
 
 ### `requirements.txt`
+---------------------
 
 List all the Python packages needed for the project.
 
 ### `README.md`
+---------------------
 
 A brief overview of the project.
 
