@@ -36,11 +36,11 @@ hbnb/
 
 ## Directories and files
 
-#### `app/`
+### `app/`
 
 Contains the core application code
 
-#### `app/api/`
+### `app/api/`
 
 Houses the API endpoints, organized by version (v1/).
 
@@ -99,27 +99,27 @@ Attributes:
 * name (String): The name of the amenity (e.g., "Wi-Fi", "Parking"). Required, maximum length of 50 characters.
 
 
-#### `app/services/`
+### `app/services/`
 
 Where the Facade pattern is implemented, managing the interaction between layers.
 
-#### `app/persistence/`
+### `app/persistence/`
 
 Where the in-memory repository is implemented for testing purpouse before the implementation of a database-backed solution using SQL Alchemy.
 
-#### `run.py`
+### `run.py`
 
 The entry point for running the Flask application.
 
-#### `config.py`
+### `config.py`
 
 Used for configuring environment variables and application settings.
 
-#### `requirements.txt`
+### `requirements.txt`
 
 List all the Python packages needed for the project.
 
-#### `README.md`
+### `README.md`
 
 A brief overview of the project.
 
