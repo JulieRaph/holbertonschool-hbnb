@@ -12,6 +12,7 @@ class HBnBFacade:
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
+        return user
         pass
     
     def get_user(self, user_id):
