@@ -49,6 +49,7 @@ Houses the API endpoints, organized by version (v1/).
 Contains the Business Logic Classes
 
 #### class BaseModel:
+--------------------------
 
 Attributes:
 * id(UUID4): Unique identifier for each user.
