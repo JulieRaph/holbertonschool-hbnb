@@ -44,7 +44,7 @@ Contains the core application code
 
 Houses the API endpoints, organized by version (v1/).
 
-### app/models/
+### `app/models/`
 
 Contains the Business Logic Classes
 
