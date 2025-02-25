@@ -11,7 +11,7 @@ user_model = api.model('User', {
 })
 
 @api.route('/')
-class UserList(Resource):
+class UserCreate(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
@@ -29,7 +29,7 @@ class UserList(Resource):
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
     
 @api.route('/<user_id>')
-class UserResource(Resource):
+class UserGetById(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
     def get(self, user_id):
@@ -38,3 +38,27 @@ class UserResource(Resource):
         if not user:
             return {'error': 'User not found'}, 404
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+
+@api.route('/<user_id>')
+class UserUpdate(Resource):
+    @api.expect(user_model, validate=True)
+    @api.response(201, 'User successfully updated')
+    @api.response(404, 'User not found')
+    @api.response(400, 'Email already registered')
+    @api.response(400, 'Invalid input data')
+    def put(self, user_id):
+        """Register a new user"""
+        user_data = api.payload
+        
+        """Get user details by ID"""
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        # Simulate email uniqueness check (to be replaced by real validation with persistence)
+        existing_user = facade.get_user_by_email(user_data['email'])
+        if existing_user != user:
+            return {'error': 'Email already registered by another user'}, 400
+
+        new_user = facade.update_user(user_id, user_data)
+        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 201
