@@ -35,9 +35,7 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        existing_user = facade.get_user(place_data["owner"])
-        if not existing_user:
-            return {'error': 'Owner not found'}
+
         new_place = facade.create_place(place_data)
         return {'id': new_place.id, 'title': new_place.title,
                 'descripton': new_place.description, 'price': new_place.price,
