@@ -41,9 +41,9 @@ class PlaceList(Resource):
         new_place = facade.create_place(place_data)
         return {'id': new_place.id, 'title': new_place.title,
                 'descripton': new_place.description, 'price': new_place.price,
-                'latitude': new_place.lattude,
+                'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
-                'owner': existing_user.id,
+                'owner': new_place.owner,
                 'amenities': new_place.amenities}
         pass
 
