@@ -11,7 +11,7 @@ user_model = api.model('User', {
 })
 
 @api.route('/')
-class UserCreate(Resource):
+class UserList(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
@@ -29,7 +29,7 @@ class UserCreate(Resource):
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
     
 @api.route('/<user_id>')
-class UserGetById(Resource):
+class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
     def get(self, user_id):
@@ -39,15 +39,13 @@ class UserGetById(Resource):
             return {'error': 'User not found'}, 404
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
 
-@api.route('/<user_id>')
-class UserUpdate(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     def put(self, user_id):
-        """Register a new user"""
+        """Update a user"""
         user_data = api.payload
         
         """Get user details by ID"""
