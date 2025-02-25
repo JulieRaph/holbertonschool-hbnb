@@ -57,8 +57,8 @@ class UserUpdate(Resource):
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
         existing_user = facade.get_user_by_email(user_data['email'])
-        if existing_user != user:
+        if existing_user and existing_user.id != user.id:
             return {'error': 'Email already registered by another user'}, 400
 
-        new_user = facade.update_user(user_id, user_data)
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 201
+        updated_user = facade.update_user(user_id, user_data)
+        return {'id': updated_user.id, 'first_name': updated_user.first_name, 'last_name': updated_user.last_name, 'email': updated_user.email}, 201
