@@ -45,7 +45,7 @@ class UserResource(Resource):
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     def put(self, user_id):
-        """Register a new user"""
+        """Update a user"""
         user_data = api.payload
         
         """Get user details by ID"""
