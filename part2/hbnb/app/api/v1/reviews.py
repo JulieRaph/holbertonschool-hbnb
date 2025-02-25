@@ -68,8 +68,8 @@ class PlaceReviewList(Resource):
         """Get all reviews for a specific place"""
         place = facade.get_place(place_id)
         review_by_place = facade.get_reviews_by_place(place_id)
-        if not place:
-            return {'error': 'Place not found'}, 404
+        # if not place:
+        #     return {'error': 'Place not found'}, 404
         return [{'id': place.id, 'text': review.text,
                  'rating': review.rating, 'user': review.user,
                  'place': review.place} for review in review_by_place]
