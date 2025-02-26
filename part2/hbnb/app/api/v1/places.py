@@ -114,7 +114,7 @@ class PlaceResource(Resource):
             if not amenity:
                 place_data.get("amenities").remove(amenity_id)
         try:   
-            updated_place = facade.update_place(place_id, place_data)
+            facade.update_place(place_id, place_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
