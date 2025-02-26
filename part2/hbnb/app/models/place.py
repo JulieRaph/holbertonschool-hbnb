@@ -100,6 +100,6 @@ class Place(BaseModel):
     def owner_id(self, value):
         if not value:
             raise TypeError("Owner ID is required")
-        if not isinstance(value, uuid):
-            raise TypeError("Owner ID must be of type uuid")
+        if not isinstance(value, str):
+            raise TypeError("Owner ID is not valid")
         self._owner_id = value
