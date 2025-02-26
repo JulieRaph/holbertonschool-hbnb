@@ -40,11 +40,14 @@ class PlaceList(Resource):
         if not user:
             api.abort(400, "Invalid user")
         
+        invalid_amenities = []
         for amenity_id in place_data.get("amenities"):
             amenity = facade.get_amenity(amenity_id)
             if not amenity:
-                place_data.get("amenities").remove(amenity_id)
-            
+                invalid_amenities.append(amenity_id)
+        if invalid_amenities:
+            api.abort(400, f"Invalid amenities: {invalid_amenities}")
+
         try:    
             new_place = facade.create_place(place_data)
             user.add_place(new_place.id)
@@ -109,10 +112,14 @@ class PlaceResource(Resource):
             api.abort(400, "Owner can not be modified")
         if place_data.get("latitude") != place.latitude or place_data.get("longitude") != place.longitude:
             api.abort(400, "Latitude and Longitude can not been modified")
+        invalid_amenities = []
         for amenity_id in place_data.get("amenities"):
             amenity = facade.get_amenity(amenity_id)
             if not amenity:
-                place_data.get("amenities").remove(amenity_id)
+                invalid_amenities.append(amenity_id)
+        if invalid_amenities:
+            api.abort(400, f"Invalid amenities: {invalid_amenities}")
+
         try:   
             facade.update_place(place_id, place_data)
         except (ValueError, TypeError) as e:
