@@ -24,3 +24,9 @@ class Amenity(BaseModel):
         if len(value) > 50:
             raise ValueError("The name is too long")
         self._name = value
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
