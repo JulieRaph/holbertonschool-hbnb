@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """This module for the Class Place"""
 
-
+import uuid
 from .base import BaseModel
 
 
@@ -33,9 +33,11 @@ class Place(BaseModel):
     @title.setter
     def title(self, value):
         if not value:
-            raise ValueError("The title is required")
+            raise TypeError("Title is required")
+        if not isinstance(value, str):
+            raise TypeError("Title value is not valid")
         if len(value) > 100:
-            raise ValueError("The title is too long")
+            raise ValueError("Title is too long")
         self._title = value
 
     @property
@@ -45,7 +47,7 @@ class Place(BaseModel):
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
-            raise TypeError("IThe description is invalid")
+            raise TypeError("Description value is not valid")
         self._description = value
 
     @property
@@ -54,12 +56,12 @@ class Place(BaseModel):
 
     @price.setter
     def price(self, value):
-        if not isinstance(value, (float, int)):
-            raise TypeError("The price is not valid")
-        if value < 0:
-            raise ValueError("The price is not valid")
         if not value:
-            raise ValueError("The price is required")
+            raise TypeError("Price is required")
+        if not isinstance(value, (float, int)):
+            raise TypeError("Price value is not valid")
+        if value < 0:
+            raise ValueError("Price must be a positive number")
         self._price = value
 
     @property
@@ -68,10 +70,12 @@ class Place(BaseModel):
 
     @latitude.setter
     def latitude(self, value):
+        if not value:
+            raise TypeError("Latitude is required")
         if not isinstance(value, float):
-            raise TypeError("The latitude is not valid")
+            raise TypeError("Latitude is not valid")
         if value < -90 or value > 90:
-            raise ValueError("The latitude must be between -90 and 90")
+            raise ValueError("Latitude must be between -90 and 90")
         self._latitude = value
 
     @property
@@ -80,10 +84,12 @@ class Place(BaseModel):
 
     @longitude.setter
     def longitude(self, value):
+        if not value:
+            raise TypeError("Longitude is required")
         if not isinstance(value, float):
-            raise TypeError("The longitude is not valid")
+            raise TypeError("Longitude is not valid")
         if value < -180 or value > 180:
-            raise ValueError("The longitude must be between -180 and 180")
+            raise ValueError("Longitude must be between -180 and 180")
         self._longitude = value
 
     @property
@@ -93,5 +99,7 @@ class Place(BaseModel):
     @owner_id.setter
     def owner_id(self, value):
         if not value:
-            raise ValueError("Owner is required")
+            raise TypeError("Owner ID is required")
+        if not isinstance(value, uuid):
+            raise TypeError("Owner ID must be of type uuid")
         self._owner_id = value
