@@ -35,26 +35,36 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-
+        
+        user = facade.get_user(place_data.get("owner_id"))
+        if not user:
+            api.abort(400, "Invalid user")
+        
+        for amenity_id in place_data.get("amenities"):
+            amenity = facade.get_amenity(amenity_id)
+            if not amenity:
+                place_data.get("amenities").remove(amenity_id)
+            
+            
         new_place = facade.create_place(place_data)
+        user.add_place(new_place.id)
+        user_data = user.to_dict()
+        facade.update_user(user.id, user_data)
+
         return {'id': new_place.id, 'title': new_place.title,
                 'descripton': new_place.description, 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
-                'owner': new_place.owner,
-                'amenities': new_place.amenities}
-        pass
+                'owner_id': new_place.owner_id}, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
         all_places = facade.get_all_places()
-        return [{'id': place.id, 'title': place.title,
-                'descripton': place.description, 'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude, 'owner': place.owner,
-                'amenities': place.amenities} for place in all_places]
-        pass
+        return [{'id': place.id,
+                 'title': place.title,
+                 'latitude': place.latitude,
+                 'longitude': place.longitude} for place in all_places], 200
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -63,14 +73,24 @@ class PlaceResource(Resource):
     def get(self, place_id):
         """Get place details by ID"""
         place = facade.get_place(place_id)
+        
         if not place:
-            return {'error': 'Place not found'}, 404
+            api.abort(404, "Place not found")
+
+        user = facade.get_user(place.owner_id)
+        user_data = user.to_dict()
+        amenities_data = []
+        for amenity_id in place.amenities:
+            amenity = facade.get_amenity(amenity_id)
+            if amenity:
+                amenities_data.append(amenity.to_dict())
+            
+
         return {'id': place.id, 'title': place.title,
                 'descripton': place.description, 'price': place.price,
                 'latitude': place.latitude,
-                'longitude': place.longitude, 'owner': place.owner,
-                'amenities': place.amenities}
-        pass
+                'longitude': place.longitude, 'owner': user_data,
+                'amenities': amenities_data}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -79,15 +99,19 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update a place's information"""
         place_data = api.payload
+        
         place = facade.get_place(place_id)
         if not place:
-            return {'error': 'Place not found'}, 404
+            api.abort(404, "Place not found")
+        if place_data.get("owner_id") != place.owner_id:
+            api.abort(400, "Owner can't be modified")
+        if place_data.get("latitude") != place.latitude or place_data.get("longitude") != place.longitude:
+            api.abort(400, "Latitude and Longitude can't not been modified")
+        for amenity_id in place_data.get("amenities"):
+            amenity = facade.get_amenity(amenity_id)
+            if not amenity:
+                place_data.get("amenities").remove(amenity_id)
+            
         updated_place = facade.update_place(place_id, place_data)
-        return {'id': updated_place.id, 'title': updated_place.title,
-                'descripton': updated_place.description,
-                'price': updated_place.price,
-                'latitude': updated_place.latitude,
-                'longitude': updated_place.longitude,
-                'owner': updated_place.owner,
-                'amenities': updated_place.amenities}
-        pass
+        if updated_place:
+            return {"message": "Place updated successfully"}, 200
