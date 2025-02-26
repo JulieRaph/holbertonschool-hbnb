@@ -7,16 +7,16 @@ from .base import BaseModel
 
 class Place(BaseModel):
     """To create attibutes for the Class"""
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner_id, amenities=[]):
         super().__init__()
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner_id = owner_id
+        self.amenities = amenities  # List to store related amenities
         self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -87,11 +87,11 @@ class Place(BaseModel):
         self._longitude = value
 
     @property
-    def owner(self):
-        return self._owner
+    def owner_id(self):
+        return self._owner_id
 
-    @owner.setter
-    def owner(self, value):
+    @owner_id.setter
+    def owner_id(self, value):
         if not value:
             raise ValueError("Owner is required")
-        self._owner = value
+        self._owner_id = value
