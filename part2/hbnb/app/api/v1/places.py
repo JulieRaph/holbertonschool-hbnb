@@ -45,11 +45,13 @@ class PlaceList(Resource):
             if not amenity:
                 place_data.get("amenities").remove(amenity_id)
             
-            
-        new_place = facade.create_place(place_data)
-        user.add_place(new_place.id)
-        user_data = user.to_dict()
-        facade.update_user(user.id, user_data)
+        try:    
+            new_place = facade.create_place(place_data)
+            user.add_place(new_place.id)
+            user_data = user.to_dict()
+            facade.update_user(user.id, user_data)
+        except (ValueError, TypeError) as e:
+            api.abort(400, str(e))
 
         return {'id': new_place.id, 'title': new_place.title,
                 'descripton': new_place.description, 'price': new_place.price,
@@ -104,14 +106,16 @@ class PlaceResource(Resource):
         if not place:
             api.abort(404, "Place not found")
         if place_data.get("owner_id") != place.owner_id:
-            api.abort(400, "Owner can't be modified")
+            api.abort(400, "Owner can not be modified")
         if place_data.get("latitude") != place.latitude or place_data.get("longitude") != place.longitude:
-            api.abort(400, "Latitude and Longitude can't not been modified")
+            api.abort(400, "Latitude and Longitude can not been modified")
         for amenity_id in place_data.get("amenities"):
             amenity = facade.get_amenity(amenity_id)
             if not amenity:
                 place_data.get("amenities").remove(amenity_id)
-            
-        updated_place = facade.update_place(place_id, place_data)
-        if updated_place:
-            return {"message": "Place updated successfully"}, 200
+        try:   
+            updated_place = facade.update_place(place_id, place_data)
+        except (ValueError, TypeError) as e:
+            api.abort(400, str(e))
+        
+        return {"message": "Place updated successfully"}, 200
