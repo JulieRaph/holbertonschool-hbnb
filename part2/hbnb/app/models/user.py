@@ -26,10 +26,12 @@ class User(BaseModel):
 
     @first_name.setter
     def first_name(self, value):
+        if not isinstance(value, str):
+            raise TypeError("First name must be a string")
         if not value:
-            raise ValueError("The first name is required")
+            raise TypeError("First name is required")
         if len(value) > 50:
-            raise ValueError("The first name is too long")
+            raise ValueError("First name is too long")
         self._first_name = value
 
     @property
@@ -38,10 +40,12 @@ class User(BaseModel):
 
     @last_name.setter
     def last_name(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Last Name must be a string")
         if not value:
-            raise ValueError("The last name is required")
+            raise TypeError("Last name is required")
         if len(value) > 50:
-            raise ValueError("The last name is too long")
+            raise ValueError("Last name is too long")
         self._last_name = value
 
     @property
@@ -50,12 +54,14 @@ class User(BaseModel):
 
     @email.setter
     def email(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Email must be a string")
         if not value:
-            raise ValueError("The email is required")
+            raise TypeError("Email is required")
         if not re.match(
             r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value
         ):
-            raise ValueError("The email is not valid")
+            raise ValueError("Email is not valid")
         self._email = value
 
     @property
@@ -65,5 +71,13 @@ class User(BaseModel):
     @is_admin.setter
     def is_admin(self, value):
         if not isinstance(value, bool):
-            raise TypeError("The admin is not True or False")
+            raise TypeError("Admin must be True or False")
         self._is_admin = value
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+        }
