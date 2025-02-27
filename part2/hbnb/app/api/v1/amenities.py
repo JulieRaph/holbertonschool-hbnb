@@ -26,7 +26,7 @@ class AmenityList(Resource):
             new_amenity = facade.create_amenity(amenity_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        return new_amenity.to_dict(), 201
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
@@ -43,7 +43,7 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity not found'}, 404
-        return {'id': amenity.id, 'name': amenity.name}, 200
+        return amenity.to_dict(), 200
     
 
     @api.expect(amenity_model)
@@ -62,9 +62,10 @@ class AmenityResource(Resource):
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity and existing_amenity.id != amenity.id:
             return {'error': 'Amenity name already exists'}, 400
+
         try:
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-        return {'id': updated_amenity.id, 'name': updated_amenity.name}
+        return updated_amenity.to_dict(), 200
     
