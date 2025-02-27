@@ -89,6 +89,8 @@ class ReviewResource(Resource):
         data = api.payload
 
         review = facade.get_review(review_id)
+        if not review:
+            api.abort(404, "Review not found")
         review_data = {'id': review.id, 'user_id': review.user_id, 'text': data.get("text"), 'rating': data.get("rating")}
         
         try:
