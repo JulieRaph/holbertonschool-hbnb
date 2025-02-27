@@ -30,7 +30,7 @@ class UserList(Resource):
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+        return new_user.to_dict(), 201
     
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -41,7 +41,7 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return user.to_dict(), 200
 
     @api.expect(user_model)
     @api.response(201, 'User successfully updated')
@@ -61,10 +61,11 @@ class UserResource(Resource):
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user and existing_user.id != user.id:
             api.abort(400, "Email already registered by another user")
+
         try:
             updated_user = facade.update_user(user_id, user_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-            return {'id': updated_user.id, 'first_name': updated_user.first_name, 'last_name': updated_user.last_name, 'email': updated_user.email}, 201
+        return updated_user.to_dict(), 201
         
