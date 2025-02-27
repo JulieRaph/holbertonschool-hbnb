@@ -95,7 +95,7 @@ class ReviewResource(Resource):
             facade.update_review(review.id, review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-
+        return {"message": "Review updated successfully"}, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
