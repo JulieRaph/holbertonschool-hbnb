@@ -20,7 +20,7 @@ class User(BaseModel):
         """This function to add places"""
         self.places.append(place)
         
-    def update_user(self, data):
+    def update(self, data):
         if "first_name" in data:
             self.first_name = data["first_name"]
         if "last_name" in data:
