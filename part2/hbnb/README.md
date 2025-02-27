@@ -55,7 +55,9 @@ Houses the API endpoints, organized by version (v1/).
 * Integrate the Presentation layer (API) and Business Logic layer through the Facade.
 
 ``` POST /api/v1/users/ ``` : Registers a new user and performs a check for email uniqueness
+
 ``` GET /api/v1/users/<user_id> ``` : Retrieves user details by ID
+
 ``` PUT /api/v1/users/<user_id> ``` : Make a partial user modification
 
 #### ► Amenities:
