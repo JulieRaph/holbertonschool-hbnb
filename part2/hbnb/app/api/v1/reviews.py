@@ -41,13 +41,13 @@ class ReviewList(Resource):
         """Register a new review"""
         review_data = api.payload
 
-        user = facade.get_user(review_data.get("user_id"))
-        if not user:
-            api.abort(400, "Invalid user")
-
         place = facade.get_place(review_data.get("place_id"))
         if not place:
             api.abort(400, "Invalid place")
+            
+        user = facade.get_user(review_data.get("user_id"))
+        if not user or user.id == place.owner_id:
+            api.abort(400, "Invalid user")
 
         try:
             new_review = facade.create_review(review_data)
@@ -91,12 +91,13 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
-        review_data = {'id': review.id, 'user_id': review.user_id, 'text': data.get("text"), 'rating': data.get("rating")}
+        review_data = {'user_id': review.user_id, 'place_id': review.place_id, 'text': data["text"], 'rating': data["rating"]}
         
         try:
-            facade.update_review(review.id, review_data)
+            facade.update_review(review_id, review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
+        
         return {"message": "Review updated successfully"}, 200
 
     @api.response(200, 'Review deleted successfully')
