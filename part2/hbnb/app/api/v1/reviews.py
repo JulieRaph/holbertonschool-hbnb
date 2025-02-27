@@ -80,7 +80,7 @@ class ReviewResource(Resource):
                  'rating': review.rating, 'text': review.text, 
                  'user_id': review.user_id}, 200
 
-    @api.expect(update_review_model)
+    @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
@@ -95,6 +95,8 @@ class ReviewResource(Resource):
         
         try:
             facade.update_review(review_id, review_data)
+            print(review_id)
+            print(review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
