@@ -14,6 +14,12 @@ class Review(BaseModel):
         self.rating = rating
         self.text = text
 
+    def update(self, data):
+        if 'text' in data:
+            self.text = data['text']
+        if 'rating' in data:
+            self.rating = data['rating']
+
     @property
     def text(self):
         return self._text
