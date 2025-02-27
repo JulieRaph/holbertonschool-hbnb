@@ -17,10 +17,6 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
-update_review_model = api.model('Review_update', {
-    'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-})
 place_model = api.model('Place', {
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
@@ -86,17 +82,15 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
-        data = api.payload
+        review_data = api.payload
 
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
-        review_data = {'user_id': review.user_id, 'place_id': review.place_id, 'text': data["text"], 'rating': data["rating"]}
         
         try:
-            facade.update_review(review_id, review_data)
-            print(review_id)
-            print(review_data)
+            updated_review = review.update(review_data)
+            facade.update_review(review_id, updated_review)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
@@ -112,8 +106,9 @@ class ReviewResource(Resource):
 
         if not review:
             api.abort(404,"Review not found")
-        facade.delete_review(review_id)
+        
         place.remove_review(review_id)
+        facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}, 200
 
 @api.route('/places/<place_id>/reviews')
