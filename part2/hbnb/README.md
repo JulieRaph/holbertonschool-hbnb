@@ -67,8 +67,11 @@ Houses the API endpoints, organized by version (v1/).
 * Integrate the Presentation layer (API) and Business Logic layer through the Facade.
 
 ``` POST /api/v1/amenities/ ``` : Register a new amenity
+
 ``` GET /api/v1/amenities/ ``` : Retrieve a list of all amenities
+
 ``` GET /api/v1/amenities/<amenity_id> ``` : Get amenity details by ID
+
 ``` PUT /api/v1/amenities/<amenity_id> ``` : Update an amenity's information
 
 #### ► Places:
@@ -81,8 +84,11 @@ Given that the Place entity has relationships with other entities, such as User 
 * Ensure that related data such as owner details and amenities are properly handled and returned with the Place data.
 
 ``` POST /api/v1/places/ ``` : Register a new place
+
 ``` GET /api/v1/places/ ``` : Return a list of all places
+
 ``` GET /api/v1/places/<place_id> ``` : Retrieve details of a specific place, including its associated owner and amenities
+
 ``` PUT /api/v1/places/<place_id> ``` : Update place information
 
 #### ► Reviews:
@@ -94,10 +100,15 @@ Given that the Place entity has relationships with other entities, such as User 
 * Update the Place model in api/v1/places.py to consider the collection of reviews for a place
 
 ``` POST /api/v1/reviews/ ``` : Register a new review
+
 ``` GET /api/v1/reviews/ ``` : Return a list of all reviews
+
 ``` GET /api/v1/reviews/<review_id> ``` : Retrieve details of a specific review
+
 ``` GET /api/v1/places/<place_id>/reviews ``` : Retrieve all reviews for a specific place
+
 ``` PUT /api/v1/reviews/<review_id> ``` : Update a review’s information
+
 ``` DELETE /api/v1/reviews/<review_id>``` : Delete a review
 
 ### `app/models/`
