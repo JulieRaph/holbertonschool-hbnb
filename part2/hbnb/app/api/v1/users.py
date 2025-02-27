@@ -64,7 +64,7 @@ class UserResource(Resource):
                 api.abort(400, "Email already registered by another user")
 
         try:
-            user.update_user(user_data)
+            user.update(user_data)
             updated_user = facade.update_user(user_id, user.to_dict())
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
