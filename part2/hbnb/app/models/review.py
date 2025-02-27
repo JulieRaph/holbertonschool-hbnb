@@ -7,10 +7,10 @@ from .base import BaseModel
 
 class Review(BaseModel):
     """To create attibutes for the Class"""
-    def __init__(self, place, user, rating, text):
+    def __init__(self, place_id, user_id, rating, text):
         super().__init__()
-        self.place = place
-        self.user = user
+        self.place_id = place_id
+        self.user_id = user_id
         self.rating = rating
         self.text = text
 
@@ -41,25 +41,25 @@ class Review(BaseModel):
         self._rating = value
 
     @property
-    def place(self):
-        return self._place
+    def place_id(self):
+        return self._place_id
 
-    @place.setter
-    def place(self, value):
+    @place_id.setter
+    def place_id(self, value):
         if not value:
             raise TypeError("Place is required")
         if not isinstance(value, str):
             raise TypeError("Place is not valid")
-        self._place = value
+        self._place_id = value
 
     @property
-    def user(self):
-        return self._user
+    def user_id(self):
+        return self._user_id
 
-    @user.setter
-    def user(self, value):
+    @user_id.setter
+    def user_id(self, value):
         if not value:
             raise TypeError("User is required")
         if not isinstance(value, str):
             raise TypeError("User is not valid")
-        self._user = value
+        self._user_id = value
