@@ -19,6 +19,14 @@ class User(BaseModel):
     def add_place(self, place):
         """This function to add places"""
         self.places.append(place)
+        
+    def update_user(self, data):
+        if "first_name" in data:
+            self.first_name = data["first_name"]
+        if "last_name" in data:
+            self.last_name = data["last_name"]
+        if "email" in data:
+            self.email = data["email"]
 
     @property
     def first_name(self):
