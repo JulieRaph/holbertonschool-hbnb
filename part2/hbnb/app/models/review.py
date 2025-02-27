@@ -21,9 +21,9 @@ class Review(BaseModel):
     @text.setter
     def text(self, value):
         if not isinstance(value, str):
-            raise TypeError("The text is invalid")
+            raise TypeError("Text is not valid")
         if not value:
-            raise ValueError("The text is required")
+            raise TypeError("Text is required")
         self._text = value
 
     @property
@@ -33,11 +33,11 @@ class Review(BaseModel):
     @rating.setter
     def rating(self, value):
         if not value:
-            raise ValueError("The rating is required")
-        if value < 1 or value > 5:
-            raise ValueError("The rating must be between 1 and 5")
+            raise TypeError("Rating is required")
         if not isinstance(value, int):
-            raise TypeError("The rating is invalid")
+            raise TypeError("Rating is not valid")
+        if value < 1 or value > 5:
+            raise ValueError("Rating must be between 1 and 5")
         self._rating = value
 
     @property
@@ -47,7 +47,9 @@ class Review(BaseModel):
     @place.setter
     def place(self, value):
         if not value:
-            raise ValueError("The place is required")
+            raise TypeError("Place is required")
+        if not isinstance(value, str):
+            raise TypeError("Place is not valid")
         self._place = value
 
     @property
@@ -57,5 +59,7 @@ class Review(BaseModel):
     @user.setter
     def user(self, value):
         if not value:
-            raise ValueError("The user is required")
+            raise TypeError("User is required")
+        if not isinstance(value, str):
+            raise TypeError("User is not valid")
         self._user = value
