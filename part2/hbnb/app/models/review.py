@@ -63,3 +63,12 @@ class Review(BaseModel):
         if not isinstance(value, str):
             raise TypeError("User is not valid")
         self._user_id = value
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "user_id": self.user_id,
+            "place_id": self.place_id
+        }
