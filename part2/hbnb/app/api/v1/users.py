@@ -58,12 +58,14 @@ class UserResource(Resource):
             api.abort(404, "User not found")
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
-        existing_user = facade.get_user_by_email(user_data['email'])
-        if existing_user and existing_user.id != user.id:
-            api.abort(400, "Email already registered by another user")
+        if "email" in user_data:
+            existing_user = facade.get_user_by_email(user_data['email'])
+            if existing_user and existing_user.id != user.id:
+                api.abort(400, "Email already registered by another user")
 
         try:
-            updated_user = facade.update_user(user_id, user_data)
+            user.update_user(user_data)
+            updated_user = facade.update_user(user_id, user.to_dict())
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
