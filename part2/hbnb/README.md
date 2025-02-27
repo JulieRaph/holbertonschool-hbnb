@@ -48,7 +48,7 @@ Contains the core application code
 
 Houses the API endpoints, organized by version (v1/).
 
-#### ► Users:
+#### ► Users Api:
 
 * Set up the POST, GET, and PUT endpoints for managing users.
 * Implement the logic for handling user-related operations in the Business Logic layer.
@@ -60,7 +60,7 @@ Houses the API endpoints, organized by version (v1/).
 
 ``` PUT /api/v1/users/<user_id> ``` : Make a partial user modification
 
-#### ► Amenities:
+#### ► Amenities Api:
 
 * Set up the POST, GET, and PUT endpoints for managing amenities.
 * Implement the necessary logic for handling amenity-related operations in the Business Logic layer.
@@ -74,7 +74,7 @@ Houses the API endpoints, organized by version (v1/).
 
 ``` PUT /api/v1/amenities/<amenity_id> ``` : Update an amenity's information
 
-#### ► Places:
+#### ► Places Api:
 Given that the Place entity has relationships with other entities, such as User (owner) and Amenity, you’ll need to handle these relationships carefully while maintaining the integrity of the application logic.
 
 * Set up the POST, GET, and PUT endpoints for managing places.
@@ -91,7 +91,7 @@ Given that the Place entity has relationships with other entities, such as User 
 
 ``` PUT /api/v1/places/<place_id> ``` : Update place information
 
-#### ► Reviews:
+#### ► Reviews Api:
 
 * Set up the POST, GET, PUT, and DELETE endpoints for managing reviews.
 * Implement the logic for handling review-related operations in the Business Logic layer.
