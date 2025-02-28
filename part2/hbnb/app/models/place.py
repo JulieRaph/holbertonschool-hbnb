@@ -22,13 +22,38 @@ class Place(BaseModel):
         """Add a review to the place."""
         self.reviews.append(review)
 
-    def add_amenity(self, amenity):
-        """Add an amenity to the place."""
-        self.amenities.append(amenity)
+    # def add_amenity(self, amenity):
+    #     """Add an amenity to the place."""
+    #     self.amenities.append(amenity)
 
     def remove_review(self, review):
         """Remove a review to the place"""
         self.reviews.remove(review)
+        
+    def update(self, data):
+        if "title" in data:
+            self.title = data["title"]
+        if "description" in data:
+            self.description = data["description"]
+        if "price" in data:
+            self.price = data["price"]
+        if "latitude" in data:
+            self.latitude = data["latitude"]
+        if "longitude" in data:
+            self.longitude = data["longitude"]
+        if "amenities" in data:
+            self.amenities = data["amenities"]
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "price": self.price,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "owner_id": self.owner_id
+        }
 
     @property
     def title(self):
