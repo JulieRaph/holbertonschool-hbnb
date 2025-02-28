@@ -17,6 +17,11 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place', example="a6e9d55e-c8d1-4268-bb65-4c19a5206a08")
 })
 
+review_update_model = api.model('Review Update', {
+    'text': fields.String(required=True, description='Text of the review', example="Not so cool!"),
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=3),
+})
+
 place_model = api.model('Place', {
     'title': fields.String(required=True, description='Title of the place', example="Cozy Apartment"),
     'description': fields.String(description='Description of the place', example="A nice place to stay"),
@@ -26,6 +31,7 @@ place_model = api.model('Place', {
     'owner_id': fields.Nested(user_model, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -75,7 +81,7 @@ class ReviewResource(Resource):
                  'rating': review.rating, 'text': review.text, 
                  'user_id': review.user_id}, 200
 
-    @api.expect(review_model)
+    @api.expect(review_update_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
