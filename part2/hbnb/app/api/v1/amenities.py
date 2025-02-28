@@ -7,6 +7,10 @@ api = Namespace('amenities', description='Amenity operations')
 
 # Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
+    'name': fields.String(required=True, description='Name of the amenity', example="Wifi")
+})
+
+amenity_update_model = api.model('Amenity Update', {
     'name': fields.String(required=True, description='Name of the amenity', example="Wi-Fi")
 })
 
@@ -46,7 +50,7 @@ class AmenityResource(Resource):
         return amenity.to_dict(), 200
     
 
-    @api.expect(amenity_model)
+    @api.expect(amenity_update_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
