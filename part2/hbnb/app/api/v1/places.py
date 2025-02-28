@@ -64,10 +64,13 @@ class PlaceList(Resource):
             user.add_place(new_place.id)
             user_data = user.to_dict()
             facade.update_user(user.id, user_data)
+            new_place_data = new_place.to_dict()
+            del new_place_data["amenities"]
+            del new_place_data["reviews"]
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return new_place.to_dict(), 201
+        return new_place_data, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -96,6 +99,14 @@ class PlaceResource(Resource):
             amenity = facade.get_amenity(amenity_id)
             if amenity:
                 amenities_data.append(amenity.to_dict())
+        
+        reviews_data = []
+        for review_id in place.reviews:
+            review = facade.get_review(review_id)
+            if review:
+                review_data = review.to_dict()
+                del review_data['place_id']
+                reviews_data.append(review_data)
             
 
         return {'id': place.id, 'title': place.title,
@@ -103,7 +114,7 @@ class PlaceResource(Resource):
                 'latitude': place.latitude,
                 'longitude': place.longitude, 'owner': user_data,
                 'amenities': amenities_data,
-                'reviews': place.reviews}, 200
+                'reviews': reviews_data}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -116,20 +127,22 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, "Place not found")
-        if place_data.get("owner_id") != place.owner_id:
+            
+        if "owner_id" in place_data:
             api.abort(400, "Owner can not be modified")
-        if place_data.get("latitude") != place.latitude or place_data.get("longitude") != place.longitude:
-            api.abort(400, "Latitude and Longitude can not been modified")
-        invalid_amenities = []
-        for amenity_id in place_data.get("amenities"):
-            amenity = facade.get_amenity(amenity_id)
-            if not amenity:
-                invalid_amenities.append(amenity_id)
-        if invalid_amenities:
-            api.abort(400, f"Invalid amenities: {invalid_amenities}")
+        
+        if "amenities" in place_data:
+            invalid_amenities = []
+            for amenity_id in place_data.get("amenities"):
+                amenity = facade.get_amenity(amenity_id)
+                if not amenity:
+                    invalid_amenities.append(amenity_id)
+            if invalid_amenities:
+                api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
-        try:   
-            facade.update_place(place_id, place_data)
+        try:
+            place.update(place_data)
+            facade.update_place(place_id, place.to_dict())
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
