@@ -77,6 +77,7 @@ class TestUserEndpoints(unittest.TestCase):
         print("Création d'un amenity test...")
         print("Status code:", response_amenity.status_code)
 
+
         self.assertEqual(response_amenity.status_code, 201)
         self.amenity2 = response_amenity.json
 
@@ -379,12 +380,10 @@ class TestUserEndpoints(unittest.TestCase):
 
         response = self.client.put(f'/api/v1/reviews/{self.review["id"]}', json={
             "text": "Not so cool!",
-            "rating": 3,
-            "user_id": self.user["id"],
-            "place_id": self.place["id"]
+            "rating": 3
         })
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
 #unsuccess examples
 
@@ -410,7 +409,7 @@ class TestUserEndpoints(unittest.TestCase):
 
     def test_delete_review(self):
 
-        response = self.client.put(f'/api/v1/reviews/{self.review["id"]}')
+        response = self.client.delete(f'/api/v1/reviews/{self.review["id"]}')
 
         self.assertEqual(response.status_code, 200)
 
@@ -418,7 +417,7 @@ class TestUserEndpoints(unittest.TestCase):
 
     def test_delete_not_found(self):
 
-        response = self.client.put('/api/v1/reviews/azerty')
+        response = self.client.delete('/api/v1/reviews/azerty')
 
         self.assertEqual(response.status_code, 404)
 
