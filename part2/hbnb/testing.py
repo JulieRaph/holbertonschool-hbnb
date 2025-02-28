@@ -145,7 +145,7 @@ class TestUserEndpoints(unittest.TestCase):
 
     def test_get_users_by_id(self):
 
-        response = self.client.get('/api/v1/users/'{self.user["id"]})
+        response = self.client.get(f'/api/v1/users/{self.user["id"]}')
 
         self.assertEqual(response.status_code, 200)
 
