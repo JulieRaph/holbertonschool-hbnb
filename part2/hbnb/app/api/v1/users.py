@@ -10,6 +10,12 @@ user_model = api.model('User', {
     'email': fields.String(required=True, description='Email of the user', example="john@email.com")
 })
 
+user_update_model = api.model('User Update', {
+    'first_name': fields.String(required=True, description='First name of the user', example="Jane"),
+    'last_name': fields.String(required=True, description='Last name of the user', example="Doe"),
+    'email': fields.String(required=True, description='Email of the user', example="jane@email.com")
+})
+
 @api.route('/')
 class UserList(Resource):
     @api.expect(user_model)
@@ -54,7 +60,7 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
         return user.to_dict(), 200
 
-    @api.expect(user_model)
+    @api.expect(user_update_model)
     @api.response(201, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
