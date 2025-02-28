@@ -37,6 +37,15 @@ place_model = api.model('Place', {
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
+place_update_model = api.model('Place Update', {
+    'title': fields.String(required=True, description='Title of the place', example="Super Apartment"),
+    'description': fields.String(description='Description of the place', example="A super place for your week-end!"),
+    'price': fields.Float(required=True, description='Price per night', example=150.0),
+    'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
+    'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
+})
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
@@ -116,7 +125,7 @@ class PlaceResource(Resource):
                 'amenities': amenities_data,
                 'reviews': reviews_data}, 200
 
-    @api.expect(place_model)
+    @api.expect(place_update_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
