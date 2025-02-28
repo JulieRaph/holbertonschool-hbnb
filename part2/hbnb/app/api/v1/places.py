@@ -51,12 +51,13 @@ class PlaceList(Resource):
             api.abort(400, "Invalid user")
         
         invalid_amenities = []
-        for amenity_id in place_data.get("amenities"):
-            amenity = facade.get_amenity(amenity_id)
-            if not amenity:
-                invalid_amenities.append(amenity_id)
-        if invalid_amenities:
-            api.abort(400, f"Invalid amenities: {invalid_amenities}")
+        if "amenities" in place_data:
+            for amenity_id in place_data.get("amenities"):
+                amenity = facade.get_amenity(amenity_id)
+                if not amenity:
+                    invalid_amenities.append(amenity_id)
+            if invalid_amenities:
+                api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
         try:    
             new_place = facade.create_place(place_data)
@@ -66,11 +67,7 @@ class PlaceList(Resource):
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return {'id': new_place.id, 'title': new_place.title,
-                'descripton': new_place.description, 'price': new_place.price,
-                'latitude': new_place.latitude,
-                'longitude': new_place.longitude,
-                'owner_id': new_place.owner_id}, 201
+        return new_place.to_dict(), 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -105,7 +102,8 @@ class PlaceResource(Resource):
                 'descripton': place.description, 'price': place.price,
                 'latitude': place.latitude,
                 'longitude': place.longitude, 'owner': user_data,
-                'amenities': amenities_data}, 200
+                'amenities': amenities_data,
+                'reviews': place.reviews}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
