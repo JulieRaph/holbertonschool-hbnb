@@ -11,21 +11,20 @@ user_model = api.model('PlaceUser', {
 })
 
 review_model = api.model('Review', {
-    'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
-    'place_id': fields.String(required=True, description='ID of the place')
+    'text': fields.String(required=True, description='Text of the review', example="Super cool!"),
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=5),
+    'user_id': fields.String(required=True, description='ID of the user', example="fa4b31d0-a8a9-4d36-8c0b-7fc3ee8dbd3c"),
+    'place_id': fields.String(required=True, description='ID of the place', example="a6e9d55e-c8d1-4268-bb65-4c19a5206a08")
 })
 
 place_model = api.model('Place', {
-    'title': fields.String(required=True, description='Title of the place'),
-    'description': fields.String(description='Description of the place'),
-    'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Latitude of the place'),
-    'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.Nested(user_model, description='Owner of the place'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
-    'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
+    'title': fields.String(required=True, description='Title of the place', example="Cozy Apartment"),
+    'description': fields.String(description='Description of the place', example="A nice place to stay"),
+    'price': fields.Float(required=True, description='Price per night', example=100.0),
+    'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
+    'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
+    'owner_id': fields.Nested(user_model, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
 
 @api.route('/')
