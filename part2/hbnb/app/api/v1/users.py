@@ -31,6 +31,18 @@ class UserList(Resource):
 
         return new_user.to_dict(), 201
     
+    @api.response(200, "Users retrieved successfully")
+    def get(self):
+        """Get all users"""
+        all_users = facade.get_all_users()
+        return [{
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email
+        } for user in all_users], 200
+
+
 @api.route('/<user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
