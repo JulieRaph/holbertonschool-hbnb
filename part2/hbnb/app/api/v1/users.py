@@ -80,4 +80,3 @@ class UserResource(Resource):
             api.abort(400, str(e))
 
         return updated_user.to_dict(), 201
-        
