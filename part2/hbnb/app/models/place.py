@@ -52,7 +52,9 @@ class Place(BaseModel):
             "price": self.price,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "owner_id": self.owner_id
+            "owner_id": self.owner_id,
+            "amenities": self.amenities,
+            "reviews": self.reviews
         }
 
     @property
