@@ -250,6 +250,25 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 // 400 Bad Request
 ```
 
+#### Testing the Creation of a place using Swagger
+
+`POST`/api/v1/places/  (Register a new place)
+```
+{
+  "title": "Cozy Apartment",
+  "description": "A nice place to stay",
+  "price": 100,
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "owner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "amenities": [
+    "1fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ]
+}
+```
+**Expected Status:**
+
+
 * Create a detailed testing report, highlighting both successful and failed cases.
 
 
