@@ -520,7 +520,7 @@ class TestUserEndpoints(unittest.TestCase):
 #get place
 #unsuccess example
 
-    def test_places_get_by_invalid_id(self):
+    def test_places_get_unsuccess(self):
         print("• Place get by invalid ID")
         response = self.client.get("/api/v1/places/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
         self.assertEqual(response.status_code, 404)
