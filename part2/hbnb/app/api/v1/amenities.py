@@ -68,7 +68,7 @@ class AmenityResource(Resource):
         
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity and existing_amenity.id != amenity.id:
-            return {'error': 'Amenity name already exists'}, 400
+            api.abort(400, "Amenity name already exists")
 
         try:
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
