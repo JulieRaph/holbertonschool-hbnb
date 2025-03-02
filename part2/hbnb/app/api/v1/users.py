@@ -11,9 +11,9 @@ user_model = api.model('User', {
 })
 
 user_update_model = api.model('User Update', {
-    'first_name': fields.String(required=True, description='First name of the user', example="Jane"),
-    'last_name': fields.String(required=True, description='Last name of the user', example="Doe"),
-    'email': fields.String(required=True, description='Email of the user', example="jane@email.com")
+    'first_name': fields.String(description='First name of the user', example="Jane"),
+    'last_name': fields.String(description='Last name of the user', example="Doe"),
+    'email': fields.String(description='Email of the user', example="jane@email.com")
 })
 
 @api.route('/')
