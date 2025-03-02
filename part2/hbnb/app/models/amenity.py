@@ -18,11 +18,11 @@ class Amenity(BaseModel):
     @name.setter
     def name(self, value):
         if not isinstance(value, str):
-            raise TypeError("The name is invalid")
+            raise TypeError("Name is invalid")
         if not value:
-            raise ValueError("The name is required")
+            raise ValueError("Name is required")
         if len(value) > 50:
-            raise ValueError("The name is too long")
+            raise ValueError("Name is too long")
         self._name = value
 
     def to_dict(self):
