@@ -57,7 +57,7 @@ class UserResource(Resource):
         """Get user details by ID"""
         user = facade.get_user(user_id)
         if not user:
-            return {'error': 'User not found'}, 404
+            api.abort(404, 'User not found')
         return user.to_dict(), 200
 
     @api.expect(user_update_model)
