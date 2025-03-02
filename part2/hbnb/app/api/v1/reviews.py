@@ -28,7 +28,7 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night', example=100.0),
     'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
     'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
-    'owner_id': fields.Nested(user_model, required=True, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+    'owner_id': fields.String(required=True, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
     'amenities': fields.List(fields.String, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
 
