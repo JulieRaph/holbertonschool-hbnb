@@ -299,6 +299,37 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 
 * Create a detailed testing report, highlighting both successful and failed cases.
 
+**Write and Run Unit Tests**
+In addition to manual tests, you should write automated unit tests using Python’s `unittest` or `pytest` frameworks. 
+
+Here’s a basic example of how to structure your tests:
+```python
+import unittest
+from app import create_app
+
+class TestUserEndpoints(unittest.TestCase):
+
+    def setUp(self):
+        self.app = create_app()
+        self.client = self.app.test_client()
+
+    def test_create_user(self):
+        response = self.client.post('/api/v1/users/', json={
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "jane.doe@example.com"
+        })
+        self.assertEqual(response.status_code, 201)
+
+    def test_create_user_invalid_data(self):
+        response = self.client.post('/api/v1/users/', json={
+            "first_name": "",
+            "last_name": "",
+            "email": "invalid-email"
+        })
+        self.assertEqual(response.status_code, 400)
+```
+
 
 ### `README.md`
 
