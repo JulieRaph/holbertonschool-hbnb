@@ -270,7 +270,32 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 **Expected Status:**
 
 `201`  Place successfully created
+
 `400`  Invalid input data
+
+#### Testing the update a place's information using Swagger
+
+`PUT`/api/v1/places/{place_id} (Update a place's information)
+```
+{
+  "title": "Super Apartment",
+  "description": "A super place for your week-end!",
+  "price": 150,
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "amenities": [
+    "1fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ]
+}
+```
+**Expected Status:**
+
+`200`  	Place updated successfully
+
+`400`   Invalid input data
+
+`404`   Place not found
+
 
 * Create a detailed testing report, highlighting both successful and failed cases.
 
