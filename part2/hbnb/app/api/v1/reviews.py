@@ -98,8 +98,8 @@ class ReviewResource(Resource):
             api.abort(400, 'Forbidden input values')
         
         try:
-            updated_review = review.update(review_data)
-            facade.update_review(review_id, updated_review)
+            review.update(review_data)
+            facade.update_review(review_id, review.to_dict())
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
