@@ -76,7 +76,8 @@ class ReviewResource(Resource):
         """Get review details by ID"""
         review = facade.get_review(review_id)
         if not review:
-            return {'error': 'Review not found'}, 404
+            api.abort(404, 'Review not found')
+
         return {'id': review.id, 'place_id': review.place_id,
                  'rating': review.rating, 'text': review.text, 
                  'user_id': review.user_id}, 200
@@ -92,6 +93,9 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
+            
+        if "user_id" in review_data or "place_id" in review_data:
+            api.abort(400, 'Forbidden input values')
         
         try:
             updated_review = review.update(review_data)
@@ -115,19 +119,3 @@ class ReviewResource(Resource):
         place.remove_review(review_id)
         facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}, 200
-
-@api.route('/places/<place_id>/reviews')
-class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get all reviews for a specific place"""
-        place = facade.get_place(place_id)
-
-        if not place:
-            return {'error': 'Place not found'}, 404
-        
-        review = facade.get_reviews_by_place(place_id)
-
-        return [{'id': review.id, 'text': review.text,
-                 'rating': review.rating} for review in review], 200
