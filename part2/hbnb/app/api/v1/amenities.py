@@ -11,7 +11,7 @@ amenity_model = api.model('Amenity', {
 })
 
 amenity_update_model = api.model('Amenity Update', {
-    'name': fields.String(required=True, description='Name of the amenity', example="Wi-Fi")
+    'name': fields.String(description='Name of the amenity', example="Wi-Fi")
 })
 
 @api.route('/')
