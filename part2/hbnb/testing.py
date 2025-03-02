@@ -6,500 +6,862 @@ from app import create_app
 import uuid
 
 class TestUserEndpoints(unittest.TestCase):
-
-    def setUp(self):
-    
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.client = self.app.test_client()
-
-        # Création d'un utilisateur test avec un email unique
-        unique_email = f"test.user.{uuid.uuid4()}@example.com"
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "Test",
-            "last_name": "User",
+    @classmethod
+    def setUpClass(cls):
+        cls.app = create_app()
+        cls.app.config['TESTING'] = True
+        cls.client = cls.app.test_client()
+        
+        ### User        
+        unique_email = f"{uuid.uuid4()}@example.com"
+        response = cls.client.post("/api/v1/users/", json={
+            "first_name": "John",
+            "last_name": "Doe",
             "email": unique_email
         })
-
-
-        print("Status code:", response.status_code)
-
-        self.assertEqual(response.status_code, 201)
-        self.owner = response.json
-
-
-        unique_email = f"test.user.{uuid.uuid4()}@example.com"
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "ahmed",
-            "last_name": "User",
-            "email": unique_email
-        })
-
-
-        print("Status code:", response.status_code)
-
-        self.assertEqual(response.status_code, 201)
-        self.user = response.json
-
-        # Création d'un lieu test pour les reviews
-        response_place = self.client.post('/api/v1/places/', json={
-            "title": "Test Place",
-            "description": "A test place",
-            "price": 50,
-            "latitude": 40.7128,
-            "longitude": -74.0060,
-            "owner_id": self.owner["id"],
-            "amenities": []
-        })
-
-        print("Création du lieu test...")
-        print("Status code:", response_place.status_code)
-
-        self.assertEqual(response_place.status_code, 201)  # Vérifie la création du lieu
-        self.place = response_place.json
-
-        #Création d'un amenity test pour place
-        response_amenity = self.client.post('/api/v1/amenities/', json={
-            "name": "Wi-Fi"
-        })
-
-        print("Création d'un amenity test...")
-        print("Status code:", response_amenity.status_code)
-
-        self.assertEqual(response_amenity.status_code, 201)
-        self.amenity = response_amenity.json
-
-        #Création d'un amenity test pour place
-        response_amenity = self.client.post('/api/v1/amenities/', json={
-            "name": "Douche"
-        })
-
-        print("Création d'un amenity test...")
-        print("Status code:", response_amenity.status_code)
-
-
-        self.assertEqual(response_amenity.status_code, 201)
-        self.amenity2 = response_amenity.json
-
-
-        #Creation d'un review 
-        response_review = self.client.post('/api/v1/reviews/', json={
-            "text": "Super cool!",
-            "rating": 5,
-            "user_id": self.user["id"],
-            "place_id": self.place["id"]
-        })
-
-        print("Création d'un review test...")
-        print("Status code:", response_review.status_code)
-
-        self.assertEqual(response_review.status_code, 201)
-        self.review = response_review.json
-
-#testing user
-#create user
-#success example
-    def test_create_user(self):
-    
-        print("Test de création d'utilisateur en cours...")
-        unique_email = f"jane.doe.{uuid.uuid4()}@example.com"
-        response = self.client.post('/api/v1/users/', json={
+        cls.user = response.json
+        
+        ### Owner        
+        unique_email = f"{uuid.uuid4()}@example.com"
+        response = cls.client.post("/api/v1/users/", json={
             "first_name": "Jane",
             "last_name": "Doe",
             "email": unique_email
         })
-        self.assertEqual(response.status_code, 201)
-#create user
-#unsuccess examples
-    def test_create_user_invalid_data(self):
-       
-        print("Test de création d'utilisateur en cours...")
-        unique_email = f"jane.doe.{uuid.uuid4()}@example.com"
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "",
-            "last_name": "Doe",
-            "email": unique_email
-        })
-        self.assertEqual(response.status_code, 400)
-
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "azertyuiopmlkjhgfdsqwxcvbnpoiuuyttrtzrasaswvzjcnvbdjglbkcnsjqkckvnfnvgjgtbzvchxqidodvvnbddfhvbvncfghj",
-            "last_name": "Doe",
-            "email": unique_email
-        })
-        self.assertEqual(response.status_code, 400)
-
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "John",
-            "last_name": "Doe",
-            "email": "fhrjtgu"
-        })
-        self.assertEqual(response.status_code, 400)
-
-#get user
-#success example
-    def test_get_users(self):
-       
-        response = self.client.get('/api/v1/users/')
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_users_by_id(self):
-
-        response = self.client.get(f'/api/v1/users/{self.user["id"]}')
-
-        self.assertEqual(response.status_code, 200)
-
-#get user
-#unsuccess example
-    def test_get_users_no_id(self):
-
-        response = self.client.get('/api/v1/users/256321478596')
-
-        self.assertEqual(response.status_code, 404)
-
-#update user
-#success example
-    def test_update_users(self):
-       response = self.client.put(f'/api/v1/users/{self.owner["id"]}', json={
-        "first_name": "Jane",
-        "last_name": "Goe",
-        "email": self.owner["email"]
-            })
-       self.assertEqual(response.status_code, 201)
-
-#update user
-#unsuccess examples
-    def test_update_invalide_users(self):
-       response = self.client.put(f'/api/v1/users/{self.owner["id"]}', json={
-        "first_name": "Jane",
-        "last_name": "Goe",
-        "email": self.user["email"]
-            })
-       self.assertEqual(response.status_code, 400)
-    
-    def test_update_users_not_found(self):
-        response = self.client.put(f'/api/v1/users/gutyrhfbdvcjeoisplcdk', json={
-        "first_name": "Jane",
-        "last_name": "Goe",
-        "email": self.owner["email"]
-            })
-        self.assertEqual(response.status_code, 404)
-
-#testing Place
-#create place
-#success example
-    def test_create_place(self):
+        cls.owner = response.json
         
-        response = self.client.post('/api/v1/places/', json={
-            "title": "Studio",
-            "description": "good studio",
+        ### Amenity
+        response = cls.client.post("/api/v1/amenities/", json={
+            "name": "Wi-Fi"
+        })
+        cls.amenity = response.json
+        
+        ### Owner Place
+        response = cls.client.post("/api/v1/places/", json={
+            "title": "Cozy Apartment",
+            "description": "A nice place to stay",
             "price": 100,
             "latitude": 37.7749,
-            "longitude": -30.4194,
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
+            "longitude": -122.4194,
+            "owner_id": cls.owner.get("id"),
+            "amenities": [
+                cls.amenity.get("id")
+            ]
         })
-
-        self.assertEqual(response.status_code, 201)
-
-#unsuccess example
-    def test_create_place_invalid_data(self):
+        cls.place = response.json
         
-        response = self.client.post('/api/v1/places/', json={
+        ### Place Review
+        response = cls.client.post("/api/v1/reviews/", json={
+            "text": "Super cool!",
+            "rating": 5,
+            "user_id": cls.user.get("id"),
+            "place_id": cls.place.get("id")
+        })
+        cls.review = response.json
+        
+    def setUp(self):
+        pass
+
+#testing user
+#create user
+#success example
+
+    def test_user_create(self):
+        print("• User create success")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": "Peter",
+            "last_name": "Parker",
+            "email": "peter@parker.com"
+        })
+        self.new_user = response.json
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "id": self.new_user.get("id"),
+            "first_name": "Peter",
+            "last_name": "Parker",
+            "email": "peter@parker.com"
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {self.new_user}\n")
+        
+#create user
+#unsuccess examples
+
+    def test_user_create_unsuccess(self):
+        print("• User create: without required value")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": "",
+            "last_name": "Parker",
+            "email": "peter@email.com"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+        print("• User create: first_name/last_name more than 50 chars")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+            "last_name": "Parker",
+            "email": "peter@email.com"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User create: invalid type value")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": 35,
+            "last_name": "Parker",
+            "email": "peter@email.com"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name must be a string"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User create: invalid email format")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": "Pater",
+            "last_name": "Paker",
+            "email": "peterparkercom"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Email is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+        print("• User create: already registered email")
+        invalid_email = self.owner.get("email")
+        response = self.client.post("/api/v1/users/", json={
+            "first_name": "Peter",
+            "last_name": "Parker",
+            "email": invalid_email
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Email already registered"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+#get user
+#success example
+
+    def test_users_get(self):
+        print("• Users get all")
+        response = self.client.get("/api/v1/users/")
+        self.assertEqual(response.status_code, 200)
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+        print("• User get by ID")
+        user_id = self.user.get("id")
+        response = self.client.get(f"/api/v1/users/{user_id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {
+            "id": self.user.get("id"),
+            'first_name': 'John', 
+            'last_name': 'Doe',
+            'email': 'johndoe@email.com'
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+#get user
+#unsuccess example
+
+    def test_users_get_unsuccess(self):
+        print("• User get by invalid ID")
+        response = self.client.get("/api/v1/users/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "User not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+#update user
+#success example
+
+    def test_user_update(self):     
+        print("• User update success")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@email.com"
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "id": self.user.get("id"),
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@email.com"
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+#update user
+#unsuccess examples
+
+    def test_user_update_unsuccess(self):
+        print("• User update: without required value")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "first_name": "",
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User update: first_name/last_name more than 50 chars")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "first_name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User update: invalid value type")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "first_name": 35,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "First name must be a string"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User update: with invalid email format")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "email": "johndoeemailcom"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Email is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• User update: with email already registered")
+        invalid_email = self.owner.get("email")
+        response = self.client.put(f"/api/v1/users/{self.user["id"]}", json={
+            "email": invalid_email
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Email already registered by another user"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+         
+        print("• User update: with invalid user id")
+        response = self.client.put("/api/v1/users/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json={
+            "email": "johndoe@email.com"
+        })   
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {'message': 'User not found'})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+#testing Amenities
+#create amenity
+#success example
+
+    def test_amenities_create(self):
+        print("• Amenity create success")
+        response =  self.client.post("/api/v1/amenities/", json={
+            "name": "Garage"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "id": self.new_amenity.get("id"),
+            "name": "Garage"
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+#create amenity
+#unsuccess example
+
+    def test_amenities_create_unsuccess(self):
+        print("• Amenity create: without name")
+        response =  self.client.post("/api/v1/amenities/", json={
+            "name": ""
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity create: name is not a string")
+        response =  self.client.post("/api/v1/amenities/", json={
+            "name": 32
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is invalid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity create: name more the 50 chars")
+        response =  self.client.post("/api/v1/amenities/", json={
+            "name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity create: name already registered")
+        response =  self.client.post("/api/v1/amenities/", json={
+            "name": "Wi-Fi"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Amenity already registered"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+#Get amenity
+#success example
+
+    def test_amenities_get(self):
+        print("• Amenities get all")
+        response =  self.client.get("/api/v1/amenities/")
+        self.assertEqual(response.status_code, 200)
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity get by id")
+        response =  self.client.get(f"/api/v1/amenities/{self.amenity.get("id")}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {
+            "id": self.amenity.get("id"),
+            "name": "Wi-Fi"
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+#Get amenity
+#unsuccess example
+
+    def test_amenities_get_unsuccess(self):
+        print("• Amenity get by invalid id")
+        response =  self.client.get("/api/v1/amenities/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Amenity not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+#Update amenity
+#success example
+
+    def test_amenities_update(self):
+        print("• Amenity update successfully")
+        response =  self.client.put(f"/api/v1/amenities/{self.amenity.get("id")}", json={
+            "name": "Swimming Pool"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {
+            "id": self.amenity.get("id"),
+            "name": "Swimming Pool"
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+#Update amenity
+#unsuccess example
+
+    def test_amenities_update_unsuccess(self):
+        print("• Amenity update: name is required")
+        response =  self.client.put(f"/api/v1/amenities/{self.amenity.get("id")}", json={
+            "name": ""
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity update: name has invalid type")
+        response =  self.client.put(f"/api/v1/amenities/{self.amenity.get("id")}", json={
+            "name": 35
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is invalid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity update: name is more tha 50 chars")
+        response =  self.client.put(f"/api/v1/amenities/{self.amenity.get("id")}", json={
+            "name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Name is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Amenity update: not found")
+        response =  self.client.put("/api/v1/amenities/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json={
+            "name": "Swimming Pool"
+        })
+        self.new_amenity = response.json
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Amenity not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+    
+#testing Places
+#create place
+#success example
+
+    def test_places_create(self):
+        print("• Place create success")
+        response = self.client.post("/api/v1/places/", json={
+            "title": "Cool Studio",
+            "description": "Super place with great view",
+            "price": 80,
+            "latitude": 56.7749,
+            "longitude": 88.4194,
+            "owner_id": self.user.get("id"),
+            "amenities": [
+                self.amenity.get("id")
+            ]
+        })
+        self.new_place = response.json
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "id": self.new_place.get("id"),
+            "title": "Cool Studio",
+            "description": "Super place with great view",
+            "price": 80,
+            "latitude": 56.7749,
+            "longitude": 88.4194,
+            "owner_id": self.user.get("id")
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {self.new_place}\n")
+        
+#create place
+#unsuccess example
+
+    def test_places_create_unsuccess(self):
+        print("• Place create: without required value")
+        response = self.client.post("/api/v1/places/", json={
             "title": "",
-            "description": "joulie sudio",
-            "price": 200,
-            "latitude": 37.7749,
-            "longitude": 80.4194,  # Valeur hors plage
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
+            "description": "Big and nice house",
+            "price": 280,
+            "latitude": 36.7749,
+            "longitude": 98.4194,
+            "owner_id": self.user.get("id")
         })
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Title is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
-        response = self.client.post('/api/v1/places/', json={
-            "title": "Cozy Apartment",
-            "description": "joulie sudio",
-            "price": -10,
-            "latitude": 37.7749,
-            "longitude": 80.4194,  # Valeur hors plage
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
+        print("• Place create: title more than 100 chars")
+        response = self.client.post("/api/v1/places/", json={
+            "title": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+            "description": "Big and nice house",
+            "price": 280,
+            "latitude": 36.7749,
+            "longitude": 98.4194,
+            "owner_id": self.user.get("id")
         })
-
         self.assertEqual(response.status_code, 400)
-
-        response = self.client.post('/api/v1/places/', json={
-            "title": "Cozy Apartment",
-            "description": "joulie sudio",
-            "price": -10,
-            "latitude": 37.7749,
-            "longitude": 80.4194,  # Valeur hors plage
-            "owner_id": self.owner["id"],
-            "amenities": ["ljkd556csvgb"]
+        self.assertEqual(response.json, {"message": "Title is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place create: with an invalid type value")
+        response = self.client.post("/api/v1/places/", json={
+            "title": 35,
+            "description": "Big and nice house",
+            "price": 280,
+            "latitude": 36.7749,
+            "longitude": 98.4194,
+            "owner_id": self.user.get("id")
         })
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Title value is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+        print("• Place create: with out of range value")
+        response = self.client.post("/api/v1/places/", json={
+            "title": "Cool Studio",
+            "description": "Super place with great view",
+            "price": -80,
+            "latitude": 56.7749,
+            "longitude": 88.4194,
+            "owner_id": self.user.get("id")
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Price must be a positive number"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place create: with a not existing amenity")
+        response = self.client.post("/api/v1/places/", json={
+            "title": "Cool Studio",
+            "description": "Super place with great view",
+            "price": 80,
+            "latitude": 56.7749,
+            "longitude": 88.4194,
+            "owner_id": self.user.get("id"),
+            "amenities": ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Invalid amenities: ['xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx']"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place create: with a not existing user")
+        response = self.client.post("/api/v1/places/", json={
+            "title": "Cool Studio",
+            "description": "Super place with great view",
+            "price": 80,
+            "latitude": 56.7749,
+            "longitude": 88.4194,
+            "owner_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Invalid user"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
 #get place
 #success example
-    def test_get_places(self):
+
+    def test_places_get(self):
+        print("• Places get all")
+        response = self.client.get("/api/v1/places/")
+        self.assertEqual(response.status_code, 200)
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
     
-        response = self.client.get('/api/v1/places/')
-
+        print("• Place get by ID")
+        response = self.client.get(f"/api/v1/places/{self.place.get("id")}")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'id': self.place.get("id"), 'title': 'Cozy Apartment', 'descripton': 'A nice place to stay', 'price': 100, 'latitude': 37.7749, 'longitude': -122.4194, 'owner': {'id': self.owner.get("id"), 'first_name': 'Jane', 'last_name': 'Doe', 'email': self.owner.get("email")}, 'amenities': [{'id': self.amenity.get("id"), 'name': 'Swimming Pool'}], 'reviews': [{'id': self.review.get("id"), 'text': 'Super cool!', 'rating': 5, 'user_id': self.user.get("id")}]})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
-    def test_get_places_by_id(self):
-
-        response = self.client.get(f'/api/v1/places/{self.place["id"]}')
-
-        self.assertEqual(response.status_code, 200)
-
+#get place
 #unsuccess example
 
-    def test_get_places_not_found(self):
-
-        response = self.client.get(f'/api/v1/places/gjthlnkvhsbzhcjr52363')
-
+    def test_places_get_by_invalid_id(self):
+        print("• Place get by invalid ID")
+        response = self.client.get("/api/v1/places/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Place not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
 
 #put place
 #success example
 
-    def test_put_place(self):
-
-        response = self.client.put(f'/api/v1/places/{self.place["id"]}', json={
-            "title": "Studio",
-            "description": "super studio",
-            "price": 500,
-            "latitude": 37.7749,
-            "longitude": -30.4194,
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
+    def test_places_update(self):     
+        print("• Place update success")
+        response = self.client.put(f"/api/v1/places/{self.place["id"]}", json={
+            "price": 150,
         })
-
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"message": "Place updated successfully"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
+#put place
 #unsuccess examples
 
-    def test_put_places_not_found(self):
-
-        response = self.client.put('/api/v1/places/hjfbvs621s41vbd6fsf', json={
-            "title": "Studio",
-            "description": "super studio",
-            "price": 500,
-            "latitude": 37.7749,
-            "longitude": -30.4194,
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
+    def test_places_update_unsuccess(self):
+        print("• Place update: without a required value")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "title": "",
         })
-
-        self.assertEqual(response.status_code, 404)
-
-    def test_put_invalid_data(self):
-
-        response = self.client.put(f'/api/v1/places/{self.place["id"]}', json={
-            "title": "Studio",
-            "description": "super studio",
-            "price": 500,
-            "latitude": 526.56,
-            "longitude": -30.4194,
-            "owner_id": self.owner["id"],
-            "amenities": [self.amenity["id"]]
-        })
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Title is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
+        print("• Place update: title more than 100 chars")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "title": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Title is too long"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place update: with an invalid value type")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "title": 35,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Title value is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place update: value out of range")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "price": -80,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Price must be a positive number"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place update: not existing amenity")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "amenities": ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Invalid amenities: ['xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx']"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place update: update owner")
+        response = self.client.put(f"/api/v1/places/{self.place.get("id")}", json={
+            "owner_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Owner can not be modified"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Place update by invalid ID")
+        response = self.client.get("/api/v1/places/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json={
+            "price": 150
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Place not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+
         
 #testing review
 #create review
 #success example
         
-    def test_create_review(self):
-
-        response = self.client.post('/api/v1/reviews/', json={
-            "place_id": self.place["id"],
-            "user_id": self.user["id"],
+    def test_reviews_create(self):
+        print("• Review create success")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": "Nice house for a weekend!",
             "rating": 5,
-            "text": "Super endroit!"
+            "user_id": self.user.get("id"),
+            "place_id": self.place.get("id")
         })
-
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "id": response.json.get("id"),
+            "text": "Nice house for a weekend!",
+            "rating": 5,
+            "user_id": self.user.get("id"),
+            "place_id": self.place.get("id")
+        })
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
+#create review
 #unsuccess
-    def test_create_invalid_review(self):
 
-        response = self.client.post('/api/v1/reviews/', json={
-            "place_id": self.place["id"],
-            "user_id": self.owner["id"],
-            "rating": 7,
-            "text": "Super endroit!"
-            })
-
+    def test_reviews_create_unsuccess(self):
+        print("• Review create: without required value")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": "",
+            "rating": 5,
+            "user_id": self.user.get("id"),
+            "place_id": self.place.get("id")
+        })
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Text is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review create: with an invalid value type")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": 35,
+            "rating": 5,
+            "user_id": self.user.get("id"),
+            "place_id": self.place.get("id")
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Text is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review create: with rating out of range")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": "Nice house for a weekend!",
+            "rating": 7,
+            "user_id": self.user.get("id"),
+            "place_id": self.place.get("id")
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Rating must be between 1 and 5"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review create: with place ID invalid value")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": "Nice house for a weekend!",
+            "rating": 5,
+            "user_id": self.user.get("id"),
+            "place_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Invalid place"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review create: with user ID invalid value")
+        response = self.client.post("/api/v1/reviews/", json={
+            "text": "Nice house for a weekend!",
+            "rating": 5,
+            "user_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "place_id": self.place.get("id")
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Invalid user"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
 #get review
 #success example
 
-    def test_get_review(self):
-
-        response = self.client.get('/api/v1/reviews/')
-
+    def test_reviews_get(self):
+        print("• Reviews get all")
+        response = self.client.get("/api/v1/reviews/")
         self.assertEqual(response.status_code, 200)
-
-    def test_get_review_by_id(self):
-
-        response = self.client.get(f'/api/v1/reviews/{self.review["id"]}')
-
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+    
+        print("• Review get by ID")
+        response = self.client.get(f"/api/v1/reviews/{self.review.get("id")}")
         self.assertEqual(response.status_code, 200)
-
-    def test_get_by_place_id(self):
-
-        response = self.client.get(f'/api/v1/reviews/places/{self.place["id"]}/reviews')
-
+        self.assertEqual(response.json, {'id': self.review.get("id"), 'place_id': self.place.get("id"), 'rating': 5, 'text': 'Super cool!', 'user_id': self.user.get("id")})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review by place ID")
+        response = self.client.get(f"/api/v1/places/{self.place.get("id")}/reviews")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, [{'id': self.review.get("id"), 'text': self.review.get("text"), 'rating': self.review.get("rating")}])
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
+#get review
 #unsuccess examples
 
-    def test_get_place_review_not_found(self):
-
-        response = self.client.get(f'/api/v1/reviews/places/fheqjqslvldbfksxnqsndcn/reviews')
-
+    def test_reviews_get_unsuccess(self):
+        print("• Review get by invalid ID")
+        response = self.client.get("/api/v1/reviews/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
         self.assertEqual(response.status_code, 404)
-
-    def test_get_review_not_found(self):
-
-        response = self.client.get('/api/v1/reviews/id')
-
+        self.assertEqual(response.json, {"message": "Review not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review by invalid place ID")
+        response = self.client.get(f"/api/v1/places/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/reviews")
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Place not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
-#put review
+#Update review
 #success example
 
-    def test_put_review(self):
-
-        response = self.client.put(f'/api/v1/reviews/{self.review["id"]}', json={
-            "text": "Not so cool!",
+    def test_reviews_update(self):      
+        print("• Review update success")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "text": "Not so cool",
             "rating": 3
         })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"message": "Review updated successfully"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
-        self.assertEqual(response.status_code, 201)
-
+#Update review
 #unsuccess examples
 
-    def test_put_review_not_found(self):
-
-        response = self.client.put('/api/v1/reviews/gjtiflkszncknv/')
-
-        self.assertEqual(response.status_code, 404)
-
-    def test_put_review_invalid_data(self):
-
-        response = self.client.put(f'/api/v1/reviews/{self.review["id"]}', json={
-            "text": "Not so cool!",
-            "rating": 14,
-            "user_id": self.user["id"],
-            "place_id": self.place["id"]
+    def test_reviews_update_unsuccess(self):
+        print("• Review update: without required value")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "text": ""
         })
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Text is required"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review update: with an invalid value type")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "text": 35
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Text is not valid"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review update: with rating out of range")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "rating": 7
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Rating must be between 1 and 5"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review update: with place ID invalid value")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "place_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Forbidden input values"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review update: with user ID invalid value")
+        response = self.client.put(f"/api/v1/reviews/{self.review.get("id")}", json={
+            "user_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {"message": "Forbidden input values"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
+        
+        print("• Review update by invalid ID")
+        response = self.client.get("/api/v1/reviews/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", json={
+            "rating": 3
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Review not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
 #delete review
 #success example
 
-    def test_delete_review(self):
-
-        response = self.client.delete(f'/api/v1/reviews/{self.review["id"]}')
-
+    def test_reviews_delete(self):
+        print("• Delete review")
+        response = self.client.delete(f"/api/v1/reviews/{self.review.get("id")}")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"message": "Review deleted successfully"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
 #unsuccess example
 
-    def test_delete_not_found(self):
-
-        response = self.client.delete('/api/v1/reviews/azerty')
-
+    def test_reviews_delete_unsuccess(self):
+        print("• Delete review")
+        response = self.client.delete("/api/v1/reviews/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
         self.assertEqual(response.status_code, 404)
-
-#test amenity
-#create amenity
-#success example
-
-    def test_create_amenity(self):
-
-        response = self.client.post('/api/v1/amenities/', json={
-            "name": "piscine"
-        })
-
-        self.assertEqual(response.status_code, 201)
-
-#unsuccess examples
-
-    def test_create_amenity_invalid_data(self):
-
-        response = self.client.post('/api/v1/amenities/', json={
-            "name": "nfeinof,eo,oifjof,oieo,if,o,fe,iijrnfnfnnufnfuueoeooirijnfzpppzjeo"
-        })
-
-        self.assertEqual(response.status_code, 400)
-
-        response = self.client.post('/api/v1/amenities/', json={
-            "name": ""
-        })
-
-        self.assertEqual(response.status_code, 400)
-
-#get amenity
-#success examples
-
-    def test_get_amenity(self):
-
-        response = self.client.get('/api/v1/amenities/')
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_amenity_by_id(self):
-
-        response = self.client.get(f'/api/v1/amenities/{self.amenity["id"]}')
-
-        self.assertEqual(response.status_code, 200)
-
-#unsuccess
-
-    def test_get_amenity_by_id_not_found(self):
-
-        response = self.client.get('/api/v1/amenities/idfgtre')
-
-        self.assertEqual(response.status_code, 404)
-
-#put amenity
-#success example
-
-    def test_put_amenity(self):
-
-        response = self.client.put(f'/api/v1/amenities/{self.amenity["id"]}', json={
-            "name": "Garage"
-        })
-
-        self.assertEqual(response.status_code, 201)
-
-#unsuccess examples
-
-    def test_put_amenity_invalid_data(self):
-
-        response = self.client.put(f'/api/v1/amenities/{self.amenity2["id"]}', json={
-            "name": "Wi-Fi"
-        })
-
-        self.assertEqual(response.status_code, 400)
-
-    def test_put_amenity_not_found(self):
-
-        response = self.client.put('/api/v1/amenities/gjhlsjnz/', json={
-            "name": "Wi-Fi"
-        })
-
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {"message": "Review not found"})
+        print("Status code:", response.status_code)
+        print(f"Json Response: {response.json}\n")
 
 if __name__ == '__main__':
     unittest.main()
