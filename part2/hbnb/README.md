@@ -299,9 +299,8 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 
 
 
-* Create a detailed testing report, highlighting both successful and failed cases.
 
-**Write and Run Unit Tests**
+* Create a detailed testing report, highlighting both successful and failed cases.
 
 In addition to manual tests, you should write automated unit tests using Python’s `unittest` or `pytest` frameworks. 
 
