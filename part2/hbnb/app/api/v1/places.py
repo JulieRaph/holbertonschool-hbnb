@@ -156,3 +156,25 @@ class PlaceResource(Resource):
             api.abort(400, str(e))
         
         return {"message": "Place updated successfully"}, 200
+
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place"""
+        place = facade.get_place(place_id)
+
+        if not place:
+            api.abort(404, 'Place not found')
+        
+        reviews = facade.get_all_reviews()
+        place_reviews = []
+        for review in reviews:
+            if review.place_id == place_id:
+                review = review.to_dict()
+                del review["user_id"]
+                del review["place_id"]
+                place_reviews.append(review)
+
+        return place_reviews, 200
