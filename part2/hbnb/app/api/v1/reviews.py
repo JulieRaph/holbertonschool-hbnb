@@ -18,8 +18,8 @@ review_model = api.model('Review', {
 })
 
 review_update_model = api.model('Review Update', {
-    'text': fields.String(required=True, description='Text of the review', example="Not so cool!"),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=3),
+    'text': fields.String(description='Text of the review', example="Not so cool!"),
+    'rating': fields.Integer(description='Rating of the place (1-5)', example=3),
 })
 
 place_model = api.model('Place', {
@@ -28,8 +28,8 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night', example=100.0),
     'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
     'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
-    'owner_id': fields.Nested(user_model, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
+    'owner_id': fields.Nested(user_model, required=True, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+    'amenities': fields.List(fields.String, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
 
 
@@ -75,6 +75,7 @@ class ReviewResource(Resource):
     def get(self, review_id):
         """Get review details by ID"""
         review = facade.get_review(review_id)
+        
         if not review:
             api.abort(404, 'Review not found')
 
@@ -99,7 +100,9 @@ class ReviewResource(Resource):
         
         try:
             review.update(review_data)
-            facade.update_review(review_id, review.to_dict())
+            review = review.to_dict()
+            del review["id"]
+            facade.update_review(review_id, review)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
@@ -111,11 +114,12 @@ class ReviewResource(Resource):
         """Delete a review"""
         
         review = facade.get_review(review_id)
-        place = facade.get_place(review.place_id)
-
         if not review:
             api.abort(404,"Review not found")
-        
+            
+        review = review.to_dict()
+        place = facade.get_place(review.get("place_id"))
+
         place.remove_review(review_id)
         facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}, 200
