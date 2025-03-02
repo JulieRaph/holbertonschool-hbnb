@@ -38,12 +38,12 @@ place_model = api.model('Place', {
 })
 
 place_update_model = api.model('Place Update', {
-    'title': fields.String(required=True, description='Title of the place', example="Super Apartment"),
+    'title': fields.String(description='Title of the place', example="Super Apartment"),
     'description': fields.String(description='Description of the place', example="A super place for your week-end!"),
-    'price': fields.Float(required=True, description='Price per night', example=150.0),
-    'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
-    'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
+    'price': fields.Float(description='Price per night', example=150.0),
+    'latitude': fields.Float(description='Latitude of the place', example=37.7749),
+    'longitude': fields.Float(description='Longitude of the place', example=-122.4194),
+    'amenities': fields.List(fields.String, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
 
 @api.route('/')
