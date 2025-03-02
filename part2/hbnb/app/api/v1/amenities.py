@@ -25,11 +25,13 @@ class AmenityList(Resource):
 
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity:
-            return {'error': 'Amenity already registered'}, 400
+            api.abort(400, 'Amenity already registered')
+        
         try:
             new_amenity = facade.create_amenity(amenity_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
+            
         return new_amenity.to_dict(), 201
 
     @api.response(200, 'List of amenities retrieved successfully')
@@ -46,10 +48,11 @@ class AmenityResource(Resource):
         """Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            return {'error': 'Amenity not found'}, 404
+            api.abort(404, 'Amenity not found')
+
         return amenity.to_dict(), 200
     
-
+    
     @api.expect(amenity_update_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
@@ -61,7 +64,7 @@ class AmenityResource(Resource):
         """Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            return {'error': 'Amenity not found'}, 404
+            api.abort(404, "Amenity not found")
         
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity and existing_amenity.id != amenity.id:
