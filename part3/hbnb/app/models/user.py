@@ -46,7 +46,7 @@ class User(BaseModel):
             raise TypeError("Password is required")
         mat = re.search(pattern, password)
         if not mat:
-            raise ValueError("Password must have at least 8 characters, one lowercase letter, one uppercase letter and one special character")
+            raise ValueError("Password must have at least 8 characters with one lowercase letter, one uppercase letter and one special character")
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     def verify_password(self, password):
