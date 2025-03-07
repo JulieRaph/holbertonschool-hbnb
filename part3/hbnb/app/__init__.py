@@ -5,7 +5,7 @@ from app.api.v1.amenities import api as amenities_ns
 from app.api.v1.places import api as places_ns
 from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.auth import api as auth_ns
-from app.extensions import bcrypt, jwt
+from app.services.extensions import bcrypt, jwt
 
 
 def create_app(config_class="config.DevelopmentConfig"):

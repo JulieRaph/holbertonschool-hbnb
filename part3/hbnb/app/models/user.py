@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """This module for the Class User"""
 
-from app.extensions import bcrypt
+from app.services.extensions import bcrypt
 from .base import BaseModel
 import re
 
@@ -97,6 +97,14 @@ class User(BaseModel):
         ):
             raise ValueError("Email is not valid")
         self._email = value
+        
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value):
+        self._password = value
 
     @property
     def is_admin(self):
@@ -107,11 +115,3 @@ class User(BaseModel):
         if not isinstance(value, bool):
             raise TypeError("Admin must be True or False")
         self._is_admin = value
-
-    @property
-    def password(self):
-        return self._password
-
-    @password.setter
-    def password(self, value):
-        self._password = value
