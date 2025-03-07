@@ -13,9 +13,9 @@ class User(BaseModel):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.password = self.hash_password(password)
         self.is_admin = is_admin
         self.places = []
+        self.hash_password(password)
 
     def add_place(self, place):
         """This function to add places"""
@@ -37,10 +37,6 @@ class User(BaseModel):
             "email": self.email,
         }
         
-    def verify_password(self, password):
-        """Verifies if the provided password matches the hashed password."""
-        return bcrypt.check_password_hash(self.password, password)
-    
     def hash_password(self, password):
         """Hashes the password before storing it."""
         pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
@@ -51,7 +47,12 @@ class User(BaseModel):
         mat = re.search(pattern, password)
         if not mat:
             raise ValueError("Password must have at least 8 characters, one lowercase letter, one uppercase letter and one special character")
-        return bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
+    
 
     @property
     def first_name(self):
@@ -106,3 +107,11 @@ class User(BaseModel):
         if not isinstance(value, bool):
             raise TypeError("Admin must be True or False")
         self._is_admin = value
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value):
+        self._password = value
