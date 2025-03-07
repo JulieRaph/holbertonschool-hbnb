@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 """This module for the Class User"""
 
-
+from app.extensions import bcrypt
 from .base import BaseModel
 import re
 
 
 class User(BaseModel):
     """To create attibutes for the Class"""
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password, is_admin=True):
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.password = self.hash_password(password)
         self.is_admin = is_admin
         self.places = []
 
@@ -27,6 +28,30 @@ class User(BaseModel):
             self.last_name = data["last_name"]
         if "email" in data:
             self.email = data["email"]
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+        }
+        
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
+    
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
+        if not isinstance(password, str):
+            raise TypeError("Password must be a string")
+        if not password:
+            raise TypeError("Password is required")
+        mat = re.search(pattern, password)
+        if not mat:
+            raise ValueError("Password must have at least 8 characters, one lowercase letter, one uppercase letter and one special character")
+        return bcrypt.generate_password_hash(password).decode('utf-8')
 
     @property
     def first_name(self):
@@ -81,11 +106,3 @@ class User(BaseModel):
         if not isinstance(value, bool):
             raise TypeError("Admin must be True or False")
         self._is_admin = value
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
-        }
