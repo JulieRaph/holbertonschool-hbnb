@@ -5,15 +5,17 @@ api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user', example="John"),
-    'last_name': fields.String(required=True, description='Last name of the user', example="Doe"),
-    'email': fields.String(required=True, description='Email of the user', example="john@email.com")
+    'first_name': fields.String(required=True, description="User first name", example="John"),
+    'last_name': fields.String(required=True, description="User last name", example="Doe"),
+    'email': fields.String(required=True, description="User email", example="john@email.com"),
+    'password': fields.String(required=True, description="User password", example="Johnd0e!")
 })
 
 user_update_model = api.model('User Update', {
     'first_name': fields.String(description='First name of the user', example="Jane"),
     'last_name': fields.String(description='Last name of the user', example="Doe"),
-    'email': fields.String(description='Email of the user', example="jane@email.com")
+    'email': fields.String(description='Email of the user', example="jane@email.com"),
+    'password': fields.String(required=True, description="User's password", example="Janed0e!")
 })
 
 @api.route('/')
@@ -41,12 +43,7 @@ class UserList(Resource):
     def get(self):
         """Retrieve a list of all users"""
         all_users = facade.get_all_users()
-        return [{
-            "id": user.id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email
-        } for user in all_users], 200
+        return [user.to_dict() for user in all_users], 200
 
 
 @api.route('/<user_id>')
