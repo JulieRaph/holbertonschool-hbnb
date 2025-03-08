@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -59,12 +60,9 @@ class PlaceList(Resource):
         if not user:
             api.abort(400, "Invalid user")
         
-        invalid_amenities = []
-        if "amenities" in place_data:
-            for amenity_id in place_data.get("amenities"):
-                amenity = facade.get_amenity(amenity_id)
-                if not amenity:
-                    invalid_amenities.append(amenity_id)
+        amenities_ids = place_data.get("amenities")
+        if amenities_ids:
+            invalid_amenities = [amenity_id for amenity_id in amenities_ids if not facade.get_amenity(amenity_id)]
             if invalid_amenities:
                 api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
@@ -168,13 +166,10 @@ class PlaceReviewList(Resource):
         if not place:
             api.abort(404, 'Place not found')
         
-        reviews = facade.get_all_reviews()
-        place_reviews = []
-        for review in reviews:
-            if review.place_id == place_id:
-                review = review.to_dict()
-                del review["user_id"]
-                del review["place_id"]
-                place_reviews.append(review)
+        reviews = facade.get_reviews_by_place(place.id)
+        place_reviews = [
+            {key: value for key, value in review.to_dict().items() if key not in ["user_id", "place_id"]}
+            for review in reviews
+        ]
 
         return place_reviews, 200
