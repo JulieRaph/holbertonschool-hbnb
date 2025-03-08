@@ -49,6 +49,11 @@ class ReviewList(Resource):
         user = facade.get_user(review_data.get("user_id"))
         if not user or user.id == place.owner_id:
             api.abort(400, "Invalid user")
+            
+        place_reviews = facade.get_reviews_by_place(place.id)
+        if any(review.user_id == user.id for review in place_reviews):
+            api.abort(400, "Place already reviewed")
+                    
 
         try:
             new_review = facade.create_review(review_data)
