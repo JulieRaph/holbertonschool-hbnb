@@ -33,7 +33,6 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
     'owner': fields.Nested(user_model, description='Owner of the place'),
     'amenities': fields.List(fields.Nested(amenity_model), description='List of amenities'),
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
@@ -53,7 +52,7 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
-    @api.resources(403, 'Unauthorized action')
+    @api.response(403, 'Unauthorized action')
     @jwt_required()
     def post(self):
         """Register a new place"""
@@ -65,6 +64,7 @@ class PlaceList(Resource):
         if not user:
             api.abort(403, "Unauthorized user")
 
+        place_data["owner_id"] = user.id
 
         amenities_ids = place_data.get("amenities")
         if amenities_ids:
