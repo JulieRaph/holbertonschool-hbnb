@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('reviews', description='Review operations')
 
@@ -38,17 +39,21 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def post(self):
         """Register a new review"""
+        current_user = get_jwt_identity()
+
         review_data = api.payload
 
         place = facade.get_place(review_data.get("place_id"))
         if not place:
             api.abort(400, "Invalid place")
-            
-        user = facade.get_user(review_data.get("user_id"))
+        
+        user = facade.get_user(current_user.get("id"))
         if not user or user.id == place.owner_id:
-            api.abort(400, "Invalid user")
+            api.abort(403, "Unauthorized user")
             
         place_reviews = facade.get_reviews_by_place(place.id)
         if any(review.user_id == user.id for review in place_reviews):
@@ -92,17 +97,25 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
+        current_user = get_jwt_identity()
+
         review_data = api.payload
+
+        if "user_id" in review_data or "place_id" in review_data:
+            api.abort(400, "Invalid input data")
 
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
-            
-        if "user_id" in review_data or "place_id" in review_data:
-            api.abort(400, 'Forbidden input values')
         
+        user = facade.get_user(current_user.get('id'))
+        if user.id != review.user_id:
+            api.abort(403,'Unauthorized action')
+
         try:
             review.update(review_data)
             review = review.to_dict()
@@ -115,13 +128,20 @@ class ReviewResource(Resource):
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def delete(self, review_id):
         """Delete a review"""
-        
+        current_user = get_jwt_identity()
+
         review = facade.get_review(review_id)
         if not review:
             api.abort(404,"Review not found")
-            
+
+        user = facade.get_user(current_user.get('id'))
+        if user.id != review.user_id:
+            api.abort(403,'Unauthorized user')
+
         review = review.to_dict()
         place = facade.get_place(review.get("place_id"))
 
