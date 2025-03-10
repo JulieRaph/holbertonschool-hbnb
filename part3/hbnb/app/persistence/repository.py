@@ -56,10 +56,10 @@ class SQLAlchemyRepository(Repository):
             db.session.commit()
 
     def get_by_attribute(self, attr_name, attr_value):
-        return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
+        return self.model.query.filter_by(**{attr_name: attr_value}).first()
     
     def get_all_by_attribute(self, attr_name, attr_value):
-        return [obj for obj in self.model.query.values() if getattr(obj, attr_name) == attr_value]
+        return self.model.query.filter_by(**{attr_name: attr_value}).all()
 
 
 # class InMemoryRepository(Repository):
