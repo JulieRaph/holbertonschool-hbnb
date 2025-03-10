@@ -131,12 +131,12 @@ class PlaceResource(Resource):
         """Update a place's information"""
         place_data = api.payload
         
+        if "owner_id" in place_data:
+            api.abort(400, 'Invalid input data')
+        
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, "Place not found")
-            
-        if "owner_id" in place_data:
-            api.abort(400, 'Invalid input data')
         
         if "amenities" in place_data:
             invalid_amenities = []

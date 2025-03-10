@@ -95,13 +95,13 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Update a review's information"""
         review_data = api.payload
+        
+        if "user_id" in review_data or "place_id" in review_data:
+            api.abort(400, 'Invalid input data')
 
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
-            
-        if "user_id" in review_data or "place_id" in review_data:
-            api.abort(400, 'Invalid input data')
         
         try:
             review.update(review_data)
