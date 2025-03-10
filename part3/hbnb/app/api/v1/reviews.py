@@ -14,7 +14,6 @@ user_model = api.model('PlaceUser', {
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review', example="Super cool!"),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=5),
-    'user_id': fields.String(required=True, description='ID of the user', example="fa4b31d0-a8a9-4d36-8c0b-7fc3ee8dbd3c"),
     'place_id': fields.String(required=True, description='ID of the place', example="a6e9d55e-c8d1-4268-bb65-4c19a5206a08")
 })
 
@@ -54,7 +53,9 @@ class ReviewList(Resource):
         user = facade.get_user(current_user.get("id"))
         if not user or user.id == place.owner_id:
             api.abort(403, "Unauthorized user")
-            
+        
+        review_data["user_id"] = user.id
+
         place_reviews = facade.get_reviews_by_place(place.id)
         if any(review.user_id == user.id for review in place_reviews):
             api.abort(400, "Place already reviewed")
