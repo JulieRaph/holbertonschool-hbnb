@@ -136,7 +136,7 @@ class PlaceResource(Resource):
             api.abort(404, "Place not found")
             
         if "owner_id" in place_data:
-            api.abort(400, 'Forbidden input values')
+            api.abort(400, 'Invalid input data')
         
         if "amenities" in place_data:
             invalid_amenities = []

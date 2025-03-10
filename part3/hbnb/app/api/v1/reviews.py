@@ -101,7 +101,7 @@ class ReviewResource(Resource):
             api.abort(404, "Review not found")
             
         if "user_id" in review_data or "place_id" in review_data:
-            api.abort(400, 'Forbidden input values')
+            api.abort(400, 'Invalid input data')
         
         try:
             review.update(review_data)
