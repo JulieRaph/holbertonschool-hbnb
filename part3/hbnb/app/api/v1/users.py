@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('users', description='User operations')
 
@@ -14,8 +15,6 @@ user_model = api.model('User', {
 user_update_model = api.model('User Update', {
     'first_name': fields.String(description='First name of the user', example="Jane"),
     'last_name': fields.String(description='Last name of the user', example="Doe"),
-    'email': fields.String(description='Email of the user', example="jane@email.com"),
-    'password': fields.String(required=True, description="User's password", example="Janed0e!")
 })
 
 @api.route('/')
@@ -27,6 +26,9 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
+        # if "is_admin" in user_data:
+        #     api.abort(400, 'Invalid input data')
+            
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
@@ -61,20 +63,28 @@ class UserResource(Resource):
     @api.response(201, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def put(self, user_id):
         """Update a user"""
-        user_data = api.payload
-        
-        """Get user details by ID"""
-        user = facade.get_user(user_id)
-        if not user:
-            api.abort(404, "User not found")
+        current_user = get_jwt_identity()
 
-        # Simulate email uniqueness check (to be replaced by real validation with persistence)
+        if not facade.get_user(user_id):
+            api.abort(404, 'User not found')
+
+        """Get user details by ID"""
+        user = facade.get_user(current_user.get('id'))
+        if user_id != user.id:
+            api.abort(403, "Unauthorized action")
+
+        user_data = api.payload
+
+        if "password" in user_data:
+            api.abort(400, 'You can not modify the password')
         if "email" in user_data:
-            existing_user = facade.get_user_by_email(user_data['email'])
-            if existing_user and existing_user.id != user.id:
-                api.abort(400, "Email already registered by another user")
+            api.abort(400, 'You can not modify the email')
+        if "is_admin" in user_data:
+            api.abort(400, 'Invalid input data')
 
         try:
             user.update(user_data)

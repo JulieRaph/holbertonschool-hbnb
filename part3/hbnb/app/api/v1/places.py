@@ -1,6 +1,7 @@
 from flask import jsonify
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place operations')
 
@@ -32,7 +33,6 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
     'owner': fields.Nested(user_model, description='Owner of the place'),
     'amenities': fields.List(fields.Nested(amenity_model), description='List of amenities'),
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
@@ -52,14 +52,20 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def post(self):
         """Register a new place"""
+        current_user = get_jwt_identity()
+
+        user = facade.get_user(current_user.get("id"))
+        if not current_user:
+            api.abort(403, "Unauthorized action")
+
         place_data = api.payload
-        
-        user = facade.get_user(place_data.get("owner_id"))
-        if not user:
-            api.abort(400, "Invalid user")
-        
+
+        place_data["owner_id"] = user.id
+
         amenities_ids = place_data.get("amenities")
         if amenities_ids:
             invalid_amenities = [amenity_id for amenity_id in amenities_ids if not facade.get_amenity(amenity_id)]
@@ -127,17 +133,24 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
+        current_user = get_jwt_identity()
+
+        place = facade.get_place(place_id)
+        if not place:
+            api.abort(404, "Place not found")
+
+        if place.owner_id != current_user.get('id'):
+            api.abort(403,'Unauthorized action')
+
         place_data = api.payload
         
         if "owner_id" in place_data:
             api.abort(400, 'Invalid input data')
-        
-        place = facade.get_place(place_id)
-        if not place:
-            api.abort(404, "Place not found")
-        
+
         if "amenities" in place_data:
             invalid_amenities = []
             for amenity_id in place_data.get("amenities"):

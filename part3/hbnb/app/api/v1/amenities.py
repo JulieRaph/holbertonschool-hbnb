@@ -75,4 +75,3 @@ class AmenityResource(Resource):
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         return updated_amenity.to_dict(), 200
-    
