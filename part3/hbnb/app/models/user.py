@@ -1,21 +1,22 @@
 #!/usr/bin/python3
 """This module for the Class User"""
 
-from app.services.extensions import bcrypt
+from app import bcrypt, db
+import uuid
 from .base import BaseModel
+from sqlalchemy.orm import validates
 import re
 
 
 class User(BaseModel):
-    """To create attibutes for the Class"""
-    def __init__(self, first_name, last_name, email, password, is_admin=False):
-        super().__init__()
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.is_admin = is_admin
-        self.places = []
-        self.hash_password(password)
+    __tablename__ = 'users'
+
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    
 
     def add_place(self, place):
         """This function to add places"""
@@ -54,40 +55,28 @@ class User(BaseModel):
         return bcrypt.check_password_hash(self.password, password)
     
 
-    @property
-    def first_name(self):
-        return self._first_name
-
-    @first_name.setter
-    def first_name(self, value):
+    @validates('first_name')
+    def validate_first_name(self, key, value):
         if not isinstance(value, str):
             raise TypeError("First name must be a string")
         if not value:
             raise TypeError("First name is required")
         if len(value) > 50:
             raise ValueError("First name is too long")
-        self._first_name = value
+        return value
 
-    @property
-    def last_name(self):
-        return self._last_name
-
-    @last_name.setter
-    def last_name(self, value):
+    @validates('last_name')
+    def validate_last_name(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Last Name must be a string")
         if not value:
             raise TypeError("Last name is required")
         if len(value) > 50:
             raise ValueError("Last name is too long")
-        self._last_name = value
+        return value
 
-    @property
-    def email(self):
-        return self._email
-
-    @email.setter
-    def email(self, value):
+    @validates('email')
+    def validate_email(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Email must be a string")
         if not value:
@@ -96,22 +85,10 @@ class User(BaseModel):
             r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value
         ):
             raise ValueError("Email is not valid")
-        self._email = value
-        
-    @property
-    def password(self):
-        return self._password
+        return value
 
-    @password.setter
-    def password(self, value):
-        self._password = value
-
-    @property
-    def is_admin(self):
-        return self._is_admin
-
-    @is_admin.setter
-    def is_admin(self, value):
+    @validates('is_admin')
+    def validate_is_admin(self, key, value):
         if not isinstance(value, bool):
             raise TypeError("Admin must be True or False")
-        self._is_admin = value
+        return value
