@@ -44,22 +44,21 @@ class ReviewList(Resource):
         """Register a new review"""
         current_user = get_jwt_identity()
 
+        user = facade.get_user(current_user.get("id"))
+        if not user or user.id == place.owner_id:
+            api.abort(403, "Unauthorized action")
+
         review_data = api.payload
 
         place = facade.get_place(review_data.get("place_id"))
         if not place:
             api.abort(400, "Invalid place")
         
-        user = facade.get_user(current_user.get("id"))
-        if not user or user.id == place.owner_id:
-            api.abort(403, "Unauthorized user")
-        
         review_data["user_id"] = user.id
 
         place_reviews = facade.get_reviews_by_place(place.id)
         if any(review.user_id == user.id for review in place_reviews):
             api.abort(400, "Place already reviewed")
-                    
 
         try:
             new_review = facade.create_review(review_data)
@@ -104,18 +103,18 @@ class ReviewResource(Resource):
         """Update a review's information"""
         current_user = get_jwt_identity()
 
+        review = facade.get_review(review_id)
+        if not review:
+            api.abort(404, "Review not found")
+
+        user = facade.get_user(current_user.get('id'))
+        if user.id != review.user_id:
+            api.abort(403,'Unauthorized action')
+
         review_data = api.payload
 
         if "user_id" in review_data or "place_id" in review_data:
             api.abort(400, "Invalid input data")
-
-        review = facade.get_review(review_id)
-        if not review:
-            api.abort(404, "Review not found")
-        
-        user = facade.get_user(current_user.get('id'))
-        if user.id != review.user_id:
-            api.abort(403,'Unauthorized action')
 
         try:
             review.update(review_data)
@@ -141,7 +140,7 @@ class ReviewResource(Resource):
 
         user = facade.get_user(current_user.get('id'))
         if user.id != review.user_id:
-            api.abort(403,'Unauthorized user')
+            api.abort(403,'Unauthorized action')
 
         review = review.to_dict()
         place = facade.get_place(review.get("place_id"))
