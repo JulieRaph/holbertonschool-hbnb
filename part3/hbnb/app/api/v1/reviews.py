@@ -43,16 +43,15 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         current_user = get_jwt_identity()
+        
+        review_data = api.payload
+        place = facade.get_place(review_data.get("place_id"))
+        if not place:
+            api.abort(400, "Invalid place")
 
         user = facade.get_user(current_user.get("id"))
         if not user or user.id == place.owner_id:
             api.abort(403, "Unauthorized action")
-
-        review_data = api.payload
-
-        place = facade.get_place(review_data.get("place_id"))
-        if not place:
-            api.abort(400, "Invalid place")
         
         review_data["user_id"] = user.id
 
