@@ -26,8 +26,8 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
-        if "is_admin" in user_data:
-            api.abort(400, 'Invalid input data')
+        # if "is_admin" in user_data:
+        #     api.abort(400, 'Invalid input data')
             
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
         existing_user = facade.get_user_by_email(user_data['email'])

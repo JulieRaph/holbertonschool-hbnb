@@ -88,13 +88,14 @@ class AdminUserModify(Resource):
 
         if not current_user.get('is_admin'):
             api.abort(403, 'Admin privileges required')
+        
+        user = facade.get_user(user_id)
+        if not user:
+            api.abort(404, 'User not found')
 
         user_data = api.payload
 
         email = user_data.get('email')
-
-        if not facade.get_user(user_id):
-            api.abort(404, 'User not found')
 
         if email:
             existing_user = facade.get_user_by_email(email)
@@ -102,8 +103,8 @@ class AdminUserModify(Resource):
                 api.abort(400, 'Email already in use')
 
         try:
-            existing_user.update(user_data)
-            updated_user = facade.update_user(user_id, existing_user.to_dict())
+            user.update(user_data)
+            updated_user = facade.update_user(user_id, user.to_dict())
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
