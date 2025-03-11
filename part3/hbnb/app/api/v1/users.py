@@ -69,19 +69,22 @@ class UserResource(Resource):
         """Update a user"""
         current_user = get_jwt_identity()
 
+        if not facade.get_user(user_id):
+            api.abort(404, 'User not found')
+
+        """Get user details by ID"""
+        user = facade.get_user(current_user.get('id'))
+        if user_id != user.id:
+            api.abort(403, "Unauthorized action")
+
         user_data = api.payload
-        
+
         if "password" in user_data:
             api.abort(400, 'You can not modify the password')
         if "email" in user_data:
             api.abort(400, 'You can not modify the email')
         if "is_admin" in user_data:
             api.abort(400, 'Invalid input data')
-
-        """Get user details by ID"""
-        user = facade.get_user(current_user.get('id'))
-        if not user or user_id != user.id:
-            api.abort(403, "Unauthorized action")
 
         try:
             user.update(user_data)
