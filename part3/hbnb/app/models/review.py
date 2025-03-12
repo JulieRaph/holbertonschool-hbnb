@@ -8,15 +8,14 @@ from sqlalchemy.orm import validates
 
 class Review(BaseModel):
     """To create attibutes for the Class"""
-    __tablename__ = 'review'
+    __tablename__ = 'reviews'
 
-    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), primary_key=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
-
-    place = db.relationship('Place', backref='reviews', lazy=True)
-    user = db.relationship('User', backref='reviews', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+    places = db.relationship('Place', secondary=db.places_reviews, lazy='subquery',
+                              backref=db.backref('reviews', lazy=True))
 
     def update(self, data):
         if 'text' in data:

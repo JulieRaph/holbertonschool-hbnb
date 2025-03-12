@@ -7,19 +7,25 @@ from .base import BaseModel
 from sqlalchemy.orm import validates
 
 
+palce_review = db.Table('palces_reviews',
+    db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True)
+)
+
+
 class Place(BaseModel):
     """To create attibutes for the Class"""
-    __tablename__ = 'place'
+    __tablename__ = 'places'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     amenities = db.relationship('Amenity', backref='place', lazy=True)
-    reviews = db.relationship('Review', backref='place', lazy=True)
+    rewiewss = db.relationship('review', secondary=db.place_review, lazy='subquery',
+                           backref=db.backref('places', lazy=True))
         
     def add_review(self, review):
         """Add a review to the place."""

@@ -11,7 +11,6 @@ class Amenity(BaseModel):
     """To create attibutes for the Class"""
     __tablename__ = 'amenity'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
     place = db.relationship('Place', backref='amenities', lazy=True)
