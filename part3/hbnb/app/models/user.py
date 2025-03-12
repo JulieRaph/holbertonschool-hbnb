@@ -5,6 +5,7 @@ from app import bcrypt, db
 import uuid
 from .base import BaseModel
 from sqlalchemy.orm import validates
+from sqlalchemy import func
 import re
 
 
@@ -54,25 +55,12 @@ class User(BaseModel):
         """Verifies if the provided password matches the hashed password."""
         return bcrypt.check_password_hash(self.password, password)
     
-
-    @validates('first_name')
+    @validates('first_name', 'last_name')
     def validate_first_name(self, key, value):
         if not isinstance(value, str):
-            raise TypeError("First name must be a string")
-        if not value:
-            raise TypeError("First name is required")
-        if len(value) > 50:
-            raise ValueError("First name is too long")
-        return value
-
-    @validates('last_name')
-    def validate_last_name(self, key, value):
-        if not isinstance(value, str):
-            raise TypeError("Last Name must be a string")
-        if not value:
-            raise TypeError("Last name is required")
-        if len(value) > 50:
-            raise ValueError("Last name is too long")
+            raise TypeError("{} must be a string".format(key.replace("_", " ")).capitalize())
+        if len(value.replace(" ", "")) < 2 or len(value.replace(" ", "")) > 50:
+            raise ValueError("{} must have between 2 and 50 characters".format(key.replace("_", " ")).capitalize())
         return value
 
     @validates('email')
@@ -82,9 +70,12 @@ class User(BaseModel):
         if not value:
             raise TypeError("Email is required")
         if not re.match(
-            r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value
+            r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$", value
         ):
             raise ValueError("Email is not valid")
+        existing_user = User.query.filter(value.lower() == func.lower(User.email)).first()
+        if existing_user:
+            raise ValueError("Email already registered")
         return value
 
     @validates('is_admin')
