@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 """This module for the Class Review"""
-
-
+from app import db
+import uuid
 from .base import BaseModel
+from sqlalchemy.orm import validates
 
 
 class Review(BaseModel):
     """To create attibutes for the Class"""
-    def __init__(self, place_id, user_id, rating, text):
-        super().__init__()
-        self.place_id = place_id
-        self.user_id = user_id
-        self.rating = rating
-        self.text = text
+    __tablename__ = 'review'
+
+    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    text = db.Column(db.Text, nullable=False)
+
+    place = db.relationship('Place', backref='reviews', lazy=True)
+    user = db.relationship('User', backref='reviews', lazy=True)
 
     def update(self, data):
         if 'text' in data:
@@ -20,23 +24,16 @@ class Review(BaseModel):
         if 'rating' in data:
             self.rating = data['rating']
 
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
+    @validates('text')
     def text(self, value):
         if not isinstance(value, str):
             raise TypeError("Text is not valid")
         if not value:
             raise TypeError("Text is required")
-        self._text = value
+        return value
 
-    @property
-    def rating(self):
-        return self._rating
 
-    @rating.setter
+    @validates('rating')
     def rating(self, value):
         if not value:
             raise TypeError("Rating is required")
@@ -44,31 +41,24 @@ class Review(BaseModel):
             raise TypeError("Rating is not valid")
         if value < 1 or value > 5:
             raise ValueError("Rating must be between 1 and 5")
-        self._rating = value
+        return value
 
-    @property
-    def place_id(self):
-        return self._place_id
 
-    @place_id.setter
+    @validates('place_id')
     def place_id(self, value):
         if not value:
             raise TypeError("Place is required")
         if not isinstance(value, str):
             raise TypeError("Place is not valid")
-        self._place_id = value
+        return value
 
-    @property
-    def user_id(self):
-        return self._user_id
-
-    @user_id.setter
+    @validates('user_id')
     def user_id(self, value):
         if not value:
             raise TypeError("User is required")
         if not isinstance(value, str):
             raise TypeError("User is not valid")
-        self._user_id = value
+        return value
     
     def to_dict(self):
         return {
