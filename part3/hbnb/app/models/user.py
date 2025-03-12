@@ -5,18 +5,19 @@ from app import bcrypt, db
 import uuid
 from .base import BaseModel
 from sqlalchemy.orm import validates
+from sqlalchemy import func
 import re
 
 
 class User(BaseModel):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    
     places = db.relationship('Place', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
 
@@ -50,7 +51,7 @@ class User(BaseModel):
             raise TypeError("Password is required")
         mat = re.search(pattern, password)
         if not mat:
-            raise ValueError("Password must have at least: 8 characters, one lowercase letter, one uppercase letter and one special character")
+            raise ValueError("Password must have at least: 8 characters, 1 lowercase letter, 1 uppercase letter and 1 special character")
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     def verify_password(self, password):
@@ -58,24 +59,12 @@ class User(BaseModel):
         return bcrypt.check_password_hash(self.password, password)
     
 
-    @validates('first_name')
+    @validates('first_name', 'last_name')
     def validate_first_name(self, key, value):
         if not isinstance(value, str):
-            raise TypeError("First name must be a string")
-        if not value:
-            raise TypeError("First name is required")
-        if len(value) > 50:
-            raise ValueError("First name is too long")
-        return value
-
-    @validates('last_name')
-    def validate_last_name(self, key, value):
-        if not isinstance(value, str):
-            raise TypeError("Last Name must be a string")
-        if not value:
-            raise TypeError("Last name is required")
-        if len(value) > 50:
-            raise ValueError("Last name is too long")
+            raise TypeError("{} must be a string".format(key.replace("_", " ")).capitalize())
+        if len(value.replace(" ", "")) < 2 or len(value.replace(" ", "")) > 50:
+            raise ValueError("{} must have between 2 and 50 characters".format(key.replace("_", " ")).capitalize())
         return value
 
     @validates('email')
@@ -85,9 +74,12 @@ class User(BaseModel):
         if not value:
             raise TypeError("Email is required")
         if not re.match(
-            r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value
+            r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$", value
         ):
             raise ValueError("Email is not valid")
+        existing_user = User.query.filter(value.lower() == func.lower(User.email)).first()
+        if existing_user:
+            raise ValueError("Email already registered")
         return value
 
     @validates('is_admin')
