@@ -1,22 +1,25 @@
 #!/usr/bin/python3
 """This module for the Class Place"""
-
+from app import db
 import uuid
 from .base import BaseModel
+from .associations import place_amenity
+from sqlalchemy.orm import validates, relationship
 
 
 class Place(BaseModel):
     """To create attibutes for the Class"""
-    def __init__(self, title, description, price, latitude, longitude, owner_id, amenities=[]):
-        super().__init__()
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner_id = owner_id
-        self.amenities = amenities  # List to store related amenities
-        self.reviews = []  # List to store related reviews
+    __tablename__ = 'places'
+    
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    owner = relationship("User", back_populates="places")
+    reviews = relationship('Review', backref='places', lazy=True)
+    # amenities = relationship('Amenity', secondary=place_amenity, lazy='subquery', backref=db.backref('places', lazy=True))
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -52,85 +55,61 @@ class Place(BaseModel):
             "price": self.price,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "owner_id": self.owner_id,
-            "amenities": self.amenities,
-            "reviews": self.reviews
+            # "owner_id": self.owner_id,
+            # "amenities": self.amenities,
+            # "reviews": self.reviews
         }
 
-    @property
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, value):
+    @validates('title')
+    def validate_title(self, key, value):
         if not value:
             raise TypeError("Title is required")
         if not isinstance(value, str):
             raise TypeError("Title value is not valid")
         if len(value) > 100:
             raise ValueError("Title is too long")
-        self._title = value
+        return value
 
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, value):
+    @validates('description')
+    def validate_description(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Description value is not valid")
-        self._description = value
+        return value
 
-    @property
-    def price(self):
-        return self._price
-
-    @price.setter
-    def price(self, value):
+    @validates('price')
+    def validate_price(self, key, value):
         if not value:
             raise TypeError("Price is required")
         if not isinstance(value, (float, int)):
             raise TypeError("Price value is not valid")
         if value < 0:
             raise ValueError("Price must be a positive number")
-        self._price = value
+        return value
 
-    @property
-    def latitude(self):
-        return self._latitude
-
-    @latitude.setter
-    def latitude(self, value):
+    @validates('latitude')
+    def validate_latitude(self, key, value):
         if not value:
             raise TypeError("Latitude is required")
         if not isinstance(value, float):
             raise TypeError("Latitude is not valid")
         if value < -90 or value > 90:
             raise ValueError("Latitude must be between -90 and 90")
-        self._latitude = value
+        return value
 
-    @property
-    def longitude(self):
-        return self._longitude
-
-    @longitude.setter
-    def longitude(self, value):
+    @validates('longitude')
+    def validate_longitude(self, key, value):
         if not value:
             raise TypeError("Longitude is required")
         if not isinstance(value, float):
             raise TypeError("Longitude is not valid")
         if value < -180 or value > 180:
             raise ValueError("Longitude must be between -180 and 180")
-        self._longitude = value
+        return value
 
-    @property
-    def owner_id(self):
-        return self._owner_id
-
-    @owner_id.setter
-    def owner_id(self, value):
-        if not value:
-            raise TypeError("Owner ID is required")
-        if not isinstance(value, str):
-            raise TypeError("Owner ID is not valid")
-        self._owner_id = value
+    # @validates('owner_id')
+    # def validate_owner_id(self, key, value):
+    #     if not value:
+    #         raise TypeError("Owner ID is required")
+    #     if not isinstance(value, str):
+    #         raise TypeError("Owner ID is not valid")
+    #     return value

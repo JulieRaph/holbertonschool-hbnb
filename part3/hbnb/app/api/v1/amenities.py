@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -19,8 +19,15 @@ class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def post(self):
         """Register a new amenity"""
+        current_user = get_jwt_identity()
+        
+        if not current_user:
+            api.abort(403, "Unauthorized action")
+        
         amenity_data = api.payload
 
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
@@ -57,8 +64,14 @@ class AmenityResource(Resource):
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, amenity_id):
         """Update an amenity's information"""
+        current_user = get_jwt_identity()
+        
+        if not current_user:
+            api.abort(403, "Unauthorized action")
+            
         amenity_data = api.payload
 
         """Get amenity details by ID"""

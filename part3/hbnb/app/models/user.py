@@ -4,7 +4,7 @@
 from app import bcrypt, db
 import uuid
 from .base import BaseModel
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from sqlalchemy import func
 import re
 
@@ -17,6 +17,7 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    places = relationship('Place', backref='users', lazy=True)
     
 
     def add_place(self, place):
@@ -36,7 +37,7 @@ class User(BaseModel):
             "id": self.id,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "email": self.email,
+            "email": self.email
         }
         
     def hash_password(self, password):
