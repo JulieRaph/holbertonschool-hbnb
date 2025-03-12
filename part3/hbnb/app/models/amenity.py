@@ -17,7 +17,7 @@ class Amenity(BaseModel):
     place = db.relationship('Place', backref='amenities', lazy=True)
 
     @validates('name')
-    def name(self, value):
+    def validates_name(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Name is invalid")
         if not value:

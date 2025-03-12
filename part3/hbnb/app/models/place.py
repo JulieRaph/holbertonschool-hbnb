@@ -61,7 +61,7 @@ class Place(BaseModel):
         }
 
     @validates('title')
-    def title(self, value):
+    def validates_title(self, key, value):
         if not value:
             raise TypeError("Title is required")
         if not isinstance(value, str):
@@ -71,13 +71,13 @@ class Place(BaseModel):
         return value
 
     @validates('description')
-    def description(self, value):
+    def validates_description(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Description value is not valid")
         return value
 
     @validates('price')
-    def price(self, value):
+    def validates_price(self, key, value):
         if not value:
             raise TypeError("Price is required")
         if not isinstance(value, (float, int)):
@@ -88,7 +88,7 @@ class Place(BaseModel):
 
 
     @validates('latitude')
-    def latitude(self, value):
+    def validates_latitude(self, key, value):
         if not value:
             raise TypeError("Latitude is required")
         if not isinstance(value, float):
@@ -99,7 +99,7 @@ class Place(BaseModel):
 
 
     @validates('longitude')
-    def longitude(self, value):
+    def validates_longitude(self, key, value):
         if not value:
             raise TypeError("Longitude is required")
         if not isinstance(value, float):
@@ -111,7 +111,7 @@ class Place(BaseModel):
  
 
     @validates('owner_id')
-    def owner_id(self, value):
+    def validates_owner_id(self, key, value):
         if not value:
             raise TypeError("Owner ID is required")
         if not isinstance(value, str):

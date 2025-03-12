@@ -25,7 +25,7 @@ class Review(BaseModel):
             self.rating = data['rating']
 
     @validates('text')
-    def text(self, value):
+    def validates_text(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Text is not valid")
         if not value:
@@ -34,7 +34,7 @@ class Review(BaseModel):
 
 
     @validates('rating')
-    def rating(self, value):
+    def validates_rating(self, key, value):
         if not value:
             raise TypeError("Rating is required")
         if not isinstance(value, int):
@@ -45,7 +45,7 @@ class Review(BaseModel):
 
 
     @validates('place_id')
-    def place_id(self, value):
+    def validates_place_id(self, key, value):
         if not value:
             raise TypeError("Place is required")
         if not isinstance(value, str):
@@ -53,7 +53,7 @@ class Review(BaseModel):
         return value
 
     @validates('user_id')
-    def user_id(self, value):
+    def validates_user_id(self, key, value):
         if not value:
             raise TypeError("User is required")
         if not isinstance(value, str):
