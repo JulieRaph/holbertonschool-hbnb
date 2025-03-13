@@ -5,11 +5,18 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
-user_model = api.model('User', {
+create_user = api.model('Create User', {
     'first_name': fields.String(required=True, description="User first name", example="John"),
     'last_name': fields.String(required=True, description="User last name", example="Doe"),
     'email': fields.String(required=True, description="User email", example="john@email.com"),
     'password': fields.String(required=True, description="User password", example="Johnd0e!")
+})
+
+create_user_success = api.model('User Created Success', {
+    'id': fields.String(description="User id", example="7e495deb-c6a6-40e1-a264-dfae089a673f"),
+    'first_name': fields.String(description="User first name", example="John"),
+    'last_name': fields.String(description="User last name", example="Doe"),
+    'email': fields.String(description="User email", example="john@email.com")
 })
 
 user_update_model = api.model('User Update', {
@@ -19,8 +26,8 @@ user_update_model = api.model('User Update', {
 
 @api.route('/')
 class UserList(Resource):
-    @api.expect(user_model)
-    @api.response(201, 'User successfully created')
+    @api.expect(create_user)
+    @api.response(201, 'User successfully created', create_user_success)
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new user"""
