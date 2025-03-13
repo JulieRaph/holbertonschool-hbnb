@@ -17,12 +17,12 @@ CREATE TABLE User (
 -- create table Place
 CREATE TABLE Place (
     id CHAR(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
-    title VARCHAR(255),
-    description TEXT,
-    price DECIMAL(10, 2),
-    latitude FLOAT,
-    longitude FLOAT,
-    owner_id CHAR(36), 
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10, 2)  NOT NULL,
+    latitude FLOAT NOT NULL,
+    longitude FLOAT NOT NULL,
+    owner_id CHAR(36) NOT NULL, 
     Foreign key (owner_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
@@ -46,11 +46,11 @@ CREATE TABLE Amenity (
 
 -- create table Place_Amenity
 CREATE TABLE Place_Amenity (
-    place_id CHAR(36),
-    amenity_id CHAR(36),
+    place_id CHAR(36) NOT NULL,
+    amenity_id CHAR(36) NOT NULL,
+    primary key (place_id, amenity_id)
     Foreign key(place_id) REFERENCES Place(id) ON DELETE CASCADE,
     Foreign key(amenity_id) REFERENCES Amenity(id) ON DELETE CASCADE,
-    primary key (place_id, amenity_id)
 );
 
 
@@ -61,7 +61,7 @@ INSERT INTO User (id, email, first_name, last_name,  password, is_admin) VALUES
     'Admin',
     'HBnB',
     '$2b$12$Hv7Pl9kTapzDfZtNr9FFhuWVgRszzcSh88B9mEejekFsAqPX2Pd8S',
-    True
+    'True'
 );
 
 -- Insert Amenity data
@@ -72,13 +72,31 @@ INSERT INTO Amenity (id, name) VALUES
 
 
 -- Insert User data
-INSERT INTO User (id, email, first_name, last_name, password, is_admin) 
-VALUES ('d9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df', 'user@hbnb.io', 'John', 'Doe', '$2b$12$Hv7Pl9kTapzDfZtNr9FFhuWVgRszzcSh88B9mEejekFsAqPX2Pd8S', FALSE);
+INSERT INTO User (id, email, first_name, last_name, password, is_admin) VALUES 
+   ('d9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df',
+    'user@hbnb.io',
+    'John', 
+    'Doe', 
+    '$2b$12$Hv7Pl9kTapzDfZtNr9FFhuWVgRszzcSh88B9mEejekFsAqPX2Pd8S', 
+    'FALSE'
+);
 
 -- Inset Place data
-INSERT INTO Place (id, title, description, price, latitude, longitude, owner_id) 
-VALUES ('c55d8d7d-cf02-48ed-a97f-9d8a1c87d5a7', 'Beautiful Villa', 'A stunning villa in the hills', 250.00, 40.748817, -73.985428, 'd9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df');
+INSERT INTO Place (id, title, description, price, latitude, longitude, owner_id) VALUES
+    ('c55d8d7d-cf02-48ed-a97f-9d8a1c87d5a7',
+    'Beautiful Villa',
+    'A stunning villa in the hills',
+    250.00,
+    40.748817,
+    -73.985428,
+    'd9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df'
+);
 
 -- Insert Review data
-INSERT INTO Review (id, text, rating, user_id, place_id) 
-VALUES ('a2e1f420-02a2-4905-b7d2-3d0d89f64872', 'Great place, highly recommend!', 5, 'd9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df', 'c55d8d7d-cf02-48ed-a97f-9d8a1c87d5a7');
+INSERT INTO Review (id, text, rating, user_id, place_id) VALUES
+    ('a2e1f420-02a2-4905-b7d2-3d0d89f64872',
+    'Great place, highly recommend!',
+    5,
+    'd9e39b5b-b8e5-4f6d-a16d-0d6c23c8a7df',
+    'c55d8d7d-cf02-48ed-a97f-9d8a1c87d5a7'
+);
