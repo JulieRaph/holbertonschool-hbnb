@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 api = Namespace('admin', description='Admin operations')
 
 # Define the user model for input validation and documentation
-user_model = api.model('User', {
+auth_user_model = api.model('User', {
     'first_name': fields.String(required=True, description="User first name", example="John"),
     'last_name': fields.String(required=True, description="User last name", example="Doe"),
     'email': fields.String(required=True, description="User email", example="john@email.com"),
@@ -14,7 +14,7 @@ user_model = api.model('User', {
     'is_admin': fields.Boolean(description="User is Admin", example=True)
 })
 
-user_update_model = api.model('User Update', {
+auth_user_update_model = api.model('User Update', {
     'first_name': fields.String(description='First name of the user', example="Jane"),
     'last_name': fields.String(description='Last name of the user', example="Doe"),
     'email': fields.String(description="User email", example="jane@email.com"),
@@ -23,15 +23,15 @@ user_update_model = api.model('User Update', {
 })
 
 # Define the amenity model for input validation and documentation
-amenity_model = api.model('Amenity', {
+auth_amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity', example="Wifi")
 })
 
-amenity_update_model = api.model('Amenity Update', {
+auth_amenity_update_model = api.model('Amenity Update', {
     'name': fields.String(description='Name of the amenity', example="Wi-Fi")
 })
 
-place_update_model = api.model('Place Update', {
+auth_place_update_model = api.model('Place Update', {
     'title': fields.String(description='Title of the place', example="Super Apartment"),
     'description': fields.String(description='Description of the place', example="A super place for your week-end!"),
     'price': fields.Float(description='Price per night', example=150.0),
@@ -40,7 +40,7 @@ place_update_model = api.model('Place Update', {
     'amenities': fields.List(fields.String, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
 })
 
-review_update_model = api.model('Review Update', {
+auth_review_update_model = api.model('Review Update', {
     'text': fields.String(description='Text of the review', example="Not so cool!"),
     'rating': fields.Integer(description='Rating of the place (1-5)', example=3),
 })
@@ -48,7 +48,7 @@ review_update_model = api.model('Review Update', {
 
 @api.route('/users/')
 class AdminUserCreate(Resource):
-    @api.expect(user_model)
+    @api.expect(auth_user_model)
     @api.response(201, 'User successfully created')
     @api.response(403, 'Admin privileges required')
     @api.response(400, 'Invalid input data')
@@ -77,7 +77,7 @@ class AdminUserCreate(Resource):
 
 @api.route('/users/<user_id>')
 class AdminUserModify(Resource):
-    @api.expect(user_update_model)
+    @api.expect(auth_user_update_model)
     @api.response(201, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(403, 'Admin privileges required')
@@ -112,7 +112,7 @@ class AdminUserModify(Resource):
 
 @api.route('/amenities/')
 class AdminAmenityCreate(Resource):
-    @api.expect(amenity_model)
+    @api.expect(auth_amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(403, 'Admin privileges required')
     @api.response(400, 'Invalid input data')
@@ -140,7 +140,7 @@ class AdminAmenityCreate(Resource):
 
 @api.route('/amenities/<amenity_id>')
 class AdminAmenityModify(Resource):
-    @api.expect(amenity_update_model)
+    @api.expect(auth_amenity_update_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
@@ -172,7 +172,7 @@ class AdminAmenityModify(Resource):
 
 @api.route('/places/<place_id>')
 class AdminPlaceModify(Resource):
-    @api.expect(place_update_model)
+    @api.expect(auth_place_update_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
@@ -231,7 +231,7 @@ class AdminPlaceModify(Resource):
 
 @api.route('/reviews/<review_id>')
 class AdminReviewModify(Resource):
-    @api.expect(review_update_model)
+    @api.expect(auth_review_update_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')

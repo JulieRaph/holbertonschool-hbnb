@@ -130,20 +130,15 @@ class PlaceResource(Resource):
             api.abort(403,'Unauthorized action')
 
         place_data = api.payload
+        amenities = place_data.pop("amenities")
         
         if "owner_id" in place_data:
             api.abort(400, 'Invalid input data')
 
-        amenities = place_data.get("amenities")
-        if amenities:
-            for amenity_id in amenities:
-                amenity = facade.get_amenity(amenity_id)
-                if amenity:
-                    place.add_amenity(amenity_id)
 
         try:
             place.update(place_data)
-            facade.update_place(place_id, place.to_dict())
+            facade.update_place(place_id, place.to_dict(), amenities)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
