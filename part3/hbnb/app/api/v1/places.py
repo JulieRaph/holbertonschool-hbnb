@@ -66,13 +66,12 @@ class PlaceList(Resource):
 
         place_data = api.payload
         place_data["owner_id"] = user.id
-
-        # amenities_ids = place_data.get("amenities", [])
-        # amenities_uuids = [uuid.UUID(amenity_id) for amenity_id in amenities_ids]
+        amenities_ids = place_data.pop("amenities_ids")
+        print(place_data)
+        print(amenities_ids)
 
         try:    
-            new_place = facade.create_place(place_data)
-            db.session.commit()
+            new_place = facade.create_place(place_data, amenities_ids)
             new_place_data = new_place.to_dict()
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
@@ -101,7 +100,7 @@ class PlaceResource(Resource):
 
         user_data = place.owner.to_dict()
         reviews_data = [review.to_dict() for review in place.reviews]
-        # amenities_data = [amenity.to_dict() for amenity in place.amenities]            
+        amenities_data = [amenity.to_dict() for amenity in place.amenities]            
 
         return {'id': place.id,
                 'title': place.title,
@@ -110,7 +109,7 @@ class PlaceResource(Resource):
                 'latitude': place.latitude,
                 'longitude': place.longitude,
                 'owner': user_data,
-                # 'amenities': amenities_data,
+                'amenities': amenities_data,
                 'reviews': reviews_data
                 }, 200
 
@@ -137,14 +136,12 @@ class PlaceResource(Resource):
         if "owner_id" in place_data:
             api.abort(400, 'Invalid input data')
 
-        # if "amenities" in place_data:
-        #     invalid_amenities = []
-        #     for amenity_id in place_data.get("amenities"):
-        #         amenity = facade.get_amenity(amenity_id)
-        #         if not amenity:
-        #             invalid_amenities.append(amenity_id)
-        #     if invalid_amenities:
-        #         api.abort(400, f"Invalid amenities: {invalid_amenities}")
+        amenities = place_data.get("amenities")
+        if amenities:
+            for amenity_id in amenities:
+                amenity = facade.get_amenity(amenity_id)
+                if amenity:
+                    place.add_amenity(amenity_id)
 
         try:
             place.update(place_data)

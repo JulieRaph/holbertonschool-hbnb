@@ -23,9 +23,10 @@ class AmenityList(Resource):
     @jwt_required()
     def post(self):
         """Register a new amenity"""
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
         
-        if not current_user:
+        if not user:
             api.abort(403, "Unauthorized action")
         
         amenity_data = api.payload
@@ -67,9 +68,10 @@ class AmenityResource(Resource):
     @jwt_required()
     def put(self, amenity_id):
         """Update an amenity's information"""
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
         
-        if not current_user:
+        if not user:
             api.abort(403, "Unauthorized action")
             
         amenity_data = api.payload

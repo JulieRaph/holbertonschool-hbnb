@@ -19,15 +19,15 @@ class Place(BaseModel):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = relationship("User", back_populates="places")
     reviews = relationship('Review', backref='places', lazy=True)
-    # amenities = relationship('Amenity', secondary=place_amenity, lazy='subquery', backref=db.backref('places', lazy=True))
+    amenities = db.relationship('Amenity', secondary=place_amenity, backref='places')
 
     def add_review(self, review):
         """Add a review to the place."""
         self.reviews.append(review)
 
-    # def add_amenity(self, amenity):
-    #     """Add an amenity to the place."""
-    #     self.amenities.append(amenity)
+    def add_amenity(self, amenity):
+        """Add an amenity to the place."""
+        self.amenities.append(amenity)
 
     def remove_review(self, review):
         """Remove a review to the place"""

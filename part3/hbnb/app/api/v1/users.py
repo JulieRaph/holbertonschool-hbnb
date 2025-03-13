@@ -62,14 +62,14 @@ class UserResource(Resource):
     @jwt_required()
     def put(self, user_id):
         """Update a user"""
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
 
         if not facade.get_user(user_id):
             api.abort(404, 'User not found')
 
         """Get user details by ID"""
-        user = facade.get_user(current_user.get('id'))
-        if user_id != user.id:
+        if not user or user_id != user.id:
             api.abort(403, "Unauthorized action")
 
         user_data = api.payload
@@ -81,7 +81,7 @@ class UserResource(Resource):
 
         try:
             user.update(user_data)
-            updated_user = facade.update_user(user_id, user.to_dict())
+            updated_user = facade.update_user(user_id, user_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
