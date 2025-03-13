@@ -23,7 +23,7 @@ CREATE TABLE Place (
     latitude FLOAT,
     longitude FLOAT,
     owner_id CHAR(36), 
-    Foreign key (owner_id)  REFERENCES User(id) ON DELETE CASCADE
+    Foreign key (owner_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
 -- create table Review

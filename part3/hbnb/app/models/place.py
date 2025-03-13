@@ -24,7 +24,7 @@ class Place(BaseModel):
     longitude = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     amenities = db.relationship('Amenity', backref='place', lazy=True)
-    rewiewss = db.relationship('review', secondary=db.place_review, lazy='subquery',
+    rewiews = db.relationship('review', secondary=db.place_review, lazy='subquery',
                            backref=db.backref('places', lazy=True))
         
     def add_review(self, review):
