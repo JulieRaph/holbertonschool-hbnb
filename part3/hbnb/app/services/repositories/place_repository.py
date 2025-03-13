@@ -7,19 +7,19 @@ class PlaceRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Place)
         
-    def add(self, place, amenities_ids): # Extrae amenities_ids y lo elimina de place_data# Crea el Place sin amenities_ids
+    def add(self, place, amenities): # Extrae amenities_ids y lo elimina de place_data# Crea el Place sin amenities_ids
         db.session.add(place)
 
-        if amenities_ids:
-            amenities = []
-            for amenity_id in amenities_ids:
+        if amenities:
+            amenities_ids = []
+            for amenity_id in amenities:
                 amenity = Amenity.query.filter_by(id=amenity_id).first()
                 if amenity:
-                    amenities.append(amenity)
+                    amenities_ids.append(amenity)
                 else:
                     raise ValueError(f"Amenity with ID {amenity_id} not found")
 
-            place.amenities.extend(amenities)
+            place.place_amenities.extend(amenities_ids)
 
         db.session.flush()
         db.session.commit()

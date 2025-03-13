@@ -19,7 +19,7 @@ class Place(BaseModel):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = relationship("User", back_populates="places")
     reviews = relationship('Review', backref='places', lazy=True)
-    amenities = db.relationship('Amenity', secondary=place_amenity, backref='places')
+    place_amenities = db.relationship('Amenity', secondary=place_amenity, backref='places')
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -44,8 +44,6 @@ class Place(BaseModel):
             self.latitude = data["latitude"]
         if "longitude" in data:
             self.longitude = data["longitude"]
-        if "amenities" in data:
-            self.amenities = data["amenities"]
     
     def to_dict(self):
         return {
@@ -102,11 +100,3 @@ class Place(BaseModel):
         if value < -180 or value > 180:
             raise ValueError("Longitude must be between -180 and 180")
         return value
-
-    # @validates('owner_id')
-    # def validate_owner_id(self, key, value):
-    #     if not value:
-    #         raise TypeError("Owner ID is required")
-    #     if not isinstance(value, str):
-    #         raise TypeError("Owner ID is not valid")
-    #     return value

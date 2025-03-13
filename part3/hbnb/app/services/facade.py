@@ -58,9 +58,9 @@ class HBnBFacade:
         return self.amenity_repo.get(amenity_id)
 
     # Place method
-    def create_place(self, place_data, amenities_ids):
+    def create_place(self, place_data, amenities):
         place = Place(**place_data)
-        self.place_repo.add(place, amenities_ids)
+        self.place_repo.add(place, amenities)
         return place
 
     def get_place(self, place_id):
