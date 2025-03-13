@@ -41,7 +41,7 @@ CREATE TABLE Review (
 -- create table Amenity
 CREATE TABLE Amenity (
     id CHAR(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
-    name VARCHAR(255) UNIQUE
+    name VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- create table Place_Amenity
