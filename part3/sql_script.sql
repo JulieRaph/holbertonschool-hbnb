@@ -1,5 +1,5 @@
 -- SQL Scripts for Table Creation
-CREATE DATABASE hbnb_db;
+CREATE DATABASE IF NOT EXISTS hbnb_db;
 USE hbnb_db;
 
 
