@@ -17,10 +17,8 @@ class Amenity(BaseModel):
     def validate_name(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Name is invalid")
-        if not value:
-            raise ValueError("Name is required")
-        if len(value) > 50:
-            raise ValueError("Name is too long")
+        if len(value.replace(" ", "")) < 2 or len(value.replace(" ", "")) > 50:
+            raise ValueError("Name must have between 2 and 50 characters")
         return value
 
     def to_dict(self):

@@ -43,7 +43,7 @@ class PlaceList(Resource):
     def get(self):
         """Retrieve a list of all places"""
         all_places = facade.get_all_places()
-        places_list = [place.dict() for place in all_places]
+        places_list = [place.to_dict() for place in all_places]
         return places_list, 200
 
 @api.route('/<place_id>')
@@ -58,7 +58,10 @@ class PlaceResource(Resource):
             api.abort(404, "Place not found")
 
         owner_data = place.owner.to_dict()
+        del owner_data['is_admin']
         reviews_data = [review.to_dict() for review in place.reviews]
+        for review in reviews_data:
+            del review['place_id'] 
         amenities_data = [amenity.to_dict() for amenity in place.place_amenities]
         place_dict = place.to_dict()
         place_dict['owner'] = owner_data

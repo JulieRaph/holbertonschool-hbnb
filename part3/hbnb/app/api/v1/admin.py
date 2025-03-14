@@ -66,7 +66,7 @@ class AdminUserModify(Resource):
 
         try:
             user.update(user_data)
-            updated_user = facade.update_user(user_id, user.to_dict()).to_dict()
+            updated_user = facade.update_user(user_id, user.to_dict())
             user_dict = updated_user.to_dict()
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))

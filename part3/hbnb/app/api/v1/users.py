@@ -37,6 +37,8 @@ class UserList(Resource):
         """Retrieve a list of all users"""
         all_users = facade.get_all_users()
         users_list = [user.to_dict() for user in all_users]
+        for user in users_list:
+            del user['is_admin'] 
         return users_list, 200
 
 
@@ -50,6 +52,7 @@ class UserResource(Resource):
         if not user:
             api.abort(404, 'User not found')
         user_dict = user.to_dict()
+        del user_dict['is_admin']
         return user_dict, 200
 
     @api.expect( models['update_user'])
