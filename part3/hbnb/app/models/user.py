@@ -45,7 +45,6 @@ class User(BaseModel):
         
     def hash_password(self, password):
         """Hashes the password before storing it."""
-        # pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
         pattern = re.compile("^[A-Za-z\d@$!#%*?&]{8,}$")
         if not isinstance(password, str):
             raise TypeError("Password must be a string")
