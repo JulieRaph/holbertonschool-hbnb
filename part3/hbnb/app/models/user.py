@@ -45,14 +45,15 @@ class User(BaseModel):
         
     def hash_password(self, password):
         """Hashes the password before storing it."""
-        pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
+        # pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
+        pattern = re.compile("^[A-Za-z\d@$!#%*?&]{8,}$")
         if not isinstance(password, str):
             raise TypeError("Password must be a string")
         if not password:
             raise TypeError("Password is required")
         mat = re.search(pattern, password)
         if not mat:
-            raise ValueError("Password must have at least: 8 characters with 1 lowercase, 1 uppercase, 1 number and 1 special character")
+            raise ValueError("Password must have at least 8 characters")
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     def verify_password(self, password):
