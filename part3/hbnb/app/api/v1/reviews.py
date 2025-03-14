@@ -49,8 +49,10 @@ class ReviewList(Resource):
         review_data = api.payload
         
         place = facade.get_place(review_data.get("place_id"))
+        
         if not place:
             api.abort(400, "Invalid place")
+        
         if not user or user.id == place.owner_id:
             api.abort(403, "Unauthorized action")
         
@@ -113,8 +115,8 @@ class ReviewResource(Resource):
         """Update a review's information"""
         current_user = get_jwt_identity().get('id')
         user = facade.get_user(current_user)        
-
         review = facade.get_review(review_id)
+        
         if not review:
             api.abort(404, "Review not found")
 
@@ -144,8 +146,8 @@ class ReviewResource(Resource):
         """Delete a review"""
         current_user = get_jwt_identity().get('id')
         user = facade.get_user(current_user)
-
         review = facade.get_review(review_id)
+        
         if not review:
             api.abort(404,"Review not found")
 

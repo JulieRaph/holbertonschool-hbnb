@@ -1,5 +1,6 @@
 from app.models.place import Place
 from app.models.amenity import Amenity
+from app.models.review import Review
 from app import db
 from app.persistence.repository import SQLAlchemyRepository
 
@@ -47,6 +48,14 @@ class PlaceRepository(SQLAlchemyRepository):
             db.session.commit()
             return place
         return None 
+    
+    def delete(self, place_id):
+        place = self.get(place_id)
+        if place:
+            Review.query.filter(Review.place_id == place_id).delete(synchronize_session=False)
+            
+            db.session.delete(place)
+            db.session.commit()
         
     def get_place(place_id, options=None):
         place = Place.query.filter_by(id=place_id)

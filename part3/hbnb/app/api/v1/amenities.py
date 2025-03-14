@@ -5,7 +5,6 @@ from app.services import facade
 
 api = Namespace('amenities', description='Amenity operations')
 
-# Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity', example="Wifi")
 })
@@ -16,31 +15,31 @@ amenity_update_model = api.model('Amenity Update', {
 
 @api.route('/')
 class AmenityList(Resource):
-    @api.expect(amenity_model)
-    @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data')
-    @api.response(403, 'Unauthorized action')
-    @jwt_required()
-    def post(self):
-        """Register a new amenity"""
-        current_user = get_jwt_identity().get('id')
-        user = facade.get_user(current_user)
+    # @api.expect(amenity_model)
+    # @api.response(201, 'Amenity successfully created')
+    # @api.response(400, 'Invalid input data')
+    # @api.response(403, 'Unauthorized action')
+    # @jwt_required()
+    # def post(self):
+    #     """Register a new amenity"""
+    #     current_user = get_jwt_identity().get('id')
+    #     user = facade.get_user(current_user)
         
-        if not user:
-            api.abort(403, "Unauthorized action")
+    #     if not user:
+    #         api.abort(403, "Unauthorized action")
         
-        amenity_data = api.payload
+    #     amenity_data = api.payload
 
-        existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
-        if existing_amenity:
-            api.abort(400, 'Amenity already registered')
+    #     existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
+    #     if existing_amenity:
+    #         api.abort(400, 'Amenity already registered')
         
-        try:
-            new_amenity = facade.create_amenity(amenity_data)
-        except (ValueError, TypeError) as e:
-            api.abort(400, str(e))
+    #     try:
+    #         new_amenity = facade.create_amenity(amenity_data)
+    #     except (ValueError, TypeError) as e:
+    #         api.abort(400, str(e))
             
-        return new_amenity.to_dict(), 201
+    #     return new_amenity.to_dict(), 201
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
@@ -61,32 +60,32 @@ class AmenityResource(Resource):
         return amenity.to_dict(), 200
     
     
-    @api.expect(amenity_update_model)
-    @api.response(200, 'Amenity updated successfully')
-    @api.response(404, 'Amenity not found')
-    @api.response(400, 'Invalid input data')
-    @jwt_required()
-    def put(self, amenity_id):
-        """Update an amenity's information"""
-        current_user = get_jwt_identity().get('id')
-        user = facade.get_user(current_user)
+    # @api.expect(amenity_update_model)
+    # @api.response(200, 'Amenity updated successfully')
+    # @api.response(404, 'Amenity not found')
+    # @api.response(400, 'Invalid input data')
+    # @jwt_required()
+    # def put(self, amenity_id):
+    #     """Update an amenity's information"""
+    #     current_user = get_jwt_identity().get('id')
+    #     user = facade.get_user(current_user)
         
-        if not user:
-            api.abort(403, "Unauthorized action")
+    #     if not user:
+    #         api.abort(403, "Unauthorized action")
             
-        amenity_data = api.payload
+    #     amenity_data = api.payload
 
-        """Get amenity details by ID"""
-        amenity = facade.get_amenity(amenity_id)
-        if not amenity:
-            api.abort(404, "Amenity not found")
+    #     """Get amenity details by ID"""
+    #     amenity = facade.get_amenity(amenity_id)
+    #     if not amenity:
+    #         api.abort(404, "Amenity not found")
         
-        existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
-        if existing_amenity and existing_amenity.id != amenity.id:
-            api.abort(400, "Amenity name already exists")
+    #     existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
+    #     if existing_amenity and existing_amenity.id != amenity.id:
+    #         api.abort(400, "Amenity name already exists")
 
-        try:
-            updated_amenity = facade.update_amenity(amenity_id, amenity_data)
-        except (ValueError, TypeError) as e:
-            api.abort(400, str(e))
-        return updated_amenity.to_dict(), 200
+    #     try:
+    #         updated_amenity = facade.update_amenity(amenity_id, amenity_data)
+    #     except (ValueError, TypeError) as e:
+    #         api.abort(400, str(e))
+    #     return updated_amenity.to_dict(), 200

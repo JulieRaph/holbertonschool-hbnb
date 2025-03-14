@@ -54,20 +54,19 @@ class AdminUserCreate(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     def post(self):
-        current_user = get_jwt_identity()
-
-        if not current_user.get('is_admin'):
+        """Register a new user"""
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
+        
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
-
+            
         user_data = api.payload
-
         email = user_data.get('email')
-
-        # Check if email is already in use
+         
         if facade.get_user_by_email(email):
             api.abort(400, 'Email already registered')
 
-        # Logic to create a new user
         try:
             new_user = facade.create_user(user_data)
         except (ValueError, TypeError) as e:
@@ -84,22 +83,21 @@ class AdminUserModify(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     def put(self, user_id):
-        current_user = get_jwt_identity()
-
-        if not current_user.get('is_admin'):
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
+        
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
         
-        user = facade.get_user(user_id)
-        if not user:
+        if not facade.get_user(user_id):
             api.abort(404, 'User not found')
 
         user_data = api.payload
-
         email = user_data.get('email')
 
         if email:
             existing_user = facade.get_user_by_email(email)
-            if existing_user and existing_user.id != user_id:
+            if existing_user:
                 api.abort(400, 'Email already in use')
 
         try:
@@ -118,14 +116,14 @@ class AdminAmenityCreate(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     def post(self):
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
 
-        if not current_user.get('is_admin'):
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
 
         amenity_data = api.payload
 
-        # Logic to create a new amenity
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity:
             api.abort(400, 'Amenity already registered')
@@ -147,19 +145,18 @@ class AdminAmenityModify(Resource):
     @api.response(403, 'Admin privileges required')
     @jwt_required()
     def put(self, amenity_id):
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
+        amenity = facade.get_amenity(amenity_id)
 
-        if not current_user.get('is_admin'):
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
 
-        amenity_data = api.payload
-
-        # Logic to update an amenity
-        """Get amenity details by ID"""
-        amenity = facade.get_amenity(amenity_id)
         if not amenity:
             api.abort(404, "Amenity not found")
         
+        amenity_data = api.payload
+
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity and existing_amenity.id != amenity.id:
             api.abort(400, "Amenity name already exists")
@@ -168,7 +165,7 @@ class AdminAmenityModify(Resource):
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-        return updated_amenity.to_dict(), 200
+        return {"message": "Amenity updated successfully"}, 200
 
 @api.route('/places/<place_id>')
 class AdminPlaceModify(Resource):
@@ -179,31 +176,25 @@ class AdminPlaceModify(Resource):
     @api.response(403, 'Unauthorized action')
     @jwt_required()
     def put(self, place_id):
-        current_user = get_jwt_identity()
-
-        if not current_user.get('is_admin'):
-            api.abort(403, 'Admin privileges required')
-
-        place_data = api.payload
-
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
         place = facade.get_place(place_id)
-
-        # Logic to update the place
+        
+        if not user or not user.is_admin:
+            api.abort(403, 'Admin privileges required')
+        
         if not place:
             api.abort(404, "Place not found")
 
-        if "amenities" in place_data:
-            invalid_amenities = []
-            for amenity_id in place_data.get("amenities"):
-                amenity = facade.get_amenity(amenity_id)
-                if not amenity:
-                    invalid_amenities.append(amenity_id)
-            if invalid_amenities:
-                api.abort(400, f"Invalid amenities: {invalid_amenities}")
+        place_data = api.payload
+        amenities = place_data.pop("amenities")
+
+        if "owner_id" in place_data:
+            api.abort(400, 'Invalid input data')
 
         try:
             place.update(place_data)
-            facade.update_place(place_id, place.to_dict())
+            facade.update_place(place_id, place.to_dict(), amenities)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
@@ -214,18 +205,16 @@ class AdminPlaceModify(Resource):
     @api.response(403, 'Unauthorized action')
     @jwt_required()
     def delete(self, place_id):
-        current_user = get_jwt_identity()
-
-        if not current_user.get('is_admin'):
-            api.abort(403, 'Admin privileges required')
-
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
         place = facade.get_place(place_id)
-        
+
+        if not user or not user.is_admin:
+            api.abort(403, 'Admin privileges required')
+            
         if not place:
             api.abort(404, "Place not found")
 
-        for review_id in place.reviews:
-            facade.delete_review(review_id)
         facade.delete_place(place_id)
         return {"message": "Place deleted successfully"}, 200
 
@@ -238,29 +227,29 @@ class AdminReviewModify(Resource):
     @api.response(403, 'Unauthorized action')
     @jwt_required()
     def put(self, review_id):
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
+        review = facade.get_review(review_id)
 
-        if not current_user.get('is_admin'):
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
 
-        review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
 
         review_data = api.payload
 
-        # Logic to update the review
-        if "user_id" in review_data or "place_id" in review_data:
-            api.abort(400, "Invalid input data")
+        valid_inputs = ["rating", "text"]
+        for input in valid_inputs:
+            if input not in review_data:
+                api.abort(400, "Invalid input data")
 
         try:
             review.update(review_data)
-            review = review.to_dict()
-            del review["id"]
-            facade.update_review(review_id, review)
+            facade.update_review(review_id, review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-
+        
         return {"message": "Review updated successfully"}, 200
 
 
@@ -269,18 +258,16 @@ class AdminReviewModify(Resource):
     @api.response(403, 'Unauthorized action')
     @jwt_required()
     def delete(self, review_id):
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
+        user = facade.get_user(current_user)
+        review = facade.get_review(review_id)
 
-        if not current_user.get('is_admin'):
+        if not user or not user.is_admin:
             api.abort(403, 'Admin privileges required')
 
-        review = facade.get_review(review_id)
         if not review:
-            api.abort(404,"Review not found")
+            api.abort(404, "Review not found")
 
-        review = review.to_dict()
-        place = facade.get_place(review.get("place_id"))
-
-        place.remove_review(review_id)
         facade.delete_review(review_id)
+        
         return {"message": "Review deleted successfully"}, 200

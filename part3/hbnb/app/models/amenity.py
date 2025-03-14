@@ -12,7 +12,6 @@ class Amenity(BaseModel):
     __tablename__ = 'amenities'
 
     name = db.Column(db.String(50), nullable=False)
-    # places = relationship('Place', secondary=place_amenity, back_populates='amenities')
 
     @validates('name')
     def validate_name(self, key, value):

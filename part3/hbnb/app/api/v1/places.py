@@ -120,13 +120,13 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update a place's information"""
         current_user = get_jwt_identity()
-
+        user = facade.get_user(current_user)
         place = facade.get_place(place_id)
+        
         if not place:
             api.abort(404, "Place not found")
 
-        # if place.owner_id != current_user.get('id'):
-        if not current_user:
+        if not user or place.owner_id != user.get('id'):
             api.abort(403,'Unauthorized action')
 
         place_data = api.payload
@@ -134,7 +134,6 @@ class PlaceResource(Resource):
         
         if "owner_id" in place_data:
             api.abort(400, 'Invalid input data')
-
 
         try:
             place.update(place_data)
