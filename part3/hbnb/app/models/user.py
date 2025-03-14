@@ -31,13 +31,16 @@ class User(BaseModel):
             self.last_name = data["last_name"]
         if "email" in data:
             self.email = data["email"]
+        if "is_admin" in data:
+            self.is_admin = data["is_admin"]
 
     def to_dict(self):
         return {
             "id": self.id,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "email": self.email
+            "email": self.email,
+            "is_admin": self.is_admin
         }
         
     def hash_password(self, password):
@@ -74,10 +77,7 @@ class User(BaseModel):
             r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$", value
         ):
             raise ValueError("Email is not valid")
-        existing_user = User.query.filter(value.lower() == func.lower(User.email)).first()
-        if existing_user:
-            raise ValueError("Email already registered")
-        return value
+        return value.lower()
 
     @validates('is_admin')
     def validate_is_admin(self, key, value):

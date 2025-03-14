@@ -1,22 +1,11 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from doc_models import initialize_models
 from app import db
 
-api = Namespace('reviews', description='Review operations')
-
-user_model = api.model('PlaceUser', {
-    'id': fields.String(description='User ID'),
-    'first_name': fields.String(description='First name of the owner'),
-    'last_name': fields.String(description='Last name of the owner'),
-    'email': fields.String(description='Email of the owner')
-})
-
-review_model = api.model('Review', {
-    'text': fields.String(required=True, description='Text of the review', example="Super cool!"),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=5),
-    'place_id': fields.String(required=True, description='ID of the place', example="a6e9d55e-c8d1-4268-bb65-4c19a5206a08")
-})
+api = Namespace('reviews', description='User operations')
+models = initialize_models(api)
 
 review_update_model = api.model('Review Update', {
     'text': fields.String(description='Text of the review', example="Not so cool!"),
@@ -36,10 +25,10 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class ReviewList(Resource):
-    @api.expect(review_model)
-    @api.response(201, 'Review successfully created')
-    @api.response(400, 'Invalid input data')
-    @api.response(403, 'Unauthorized action')
+    @api.expect(models['create_review'])
+    @api.response(201, 'Review successfully created', models['review_response'])
+    @api.response(400, 'Invalid input data', models['invalid_input'])
+    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
     @jwt_required()
     def post(self):
         """Register a new review"""
@@ -66,50 +55,39 @@ class ReviewList(Resource):
 
         try:
             new_review = facade.create_review(review_data)
+            review_dict = new_review.to_dict()
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return {'id': new_review.id,
-                'place_id': new_review.place_id,
-                'rating': new_review.rating,
-                'text': new_review.text,
-                'user_id': new_review.user_id
-                }, 201
+        return review_dict, 201
 
-    @api.response(200, 'List of reviews retrieved successfully')
+    @api.response(200, 'List of reviews retrieved successfully', models['reviews_list']['reviews'])
     def get(self):
         """Retrieve a list of all reviews"""
         all_reviews = facade.get_all_reviews()
-        return [{'id': review.id,
-                'place_id': review.place_id,
-                'rating': review.rating,
-                'text': review.text, 
-                'user_id': review.user_id
-                } for review in all_reviews]
+        reviews_list = [review.to_dict() for review in all_reviews]
+        return reviews_list, 200
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
-    @api.response(200, 'Review details retrieved successfully')
-    @api.response(404, 'Review not found')
+    @api.response(200, 'Review details retrieved successfully', models['review_response'])
+    @api.response(404, 'Review not found', models['not_found'])
     def get(self, review_id):
         """Get review details by ID"""
         review = facade.get_review(review_id)
         
         if not review:
             api.abort(404, 'Review not found')
+        
+        review_dict = review.to_dict()
 
-        return {'id': review.id,
-                'place_id': review.place_id,
-                'rating': review.rating,
-                'text': review.text,
-                'user_id': review.user_id
-                }, 200
+        return review_dict, 200
 
     @api.expect(review_update_model)
-    @api.response(200, 'Review updated successfully')
-    @api.response(404, 'Review not found')
-    @api.response(400, 'Invalid input data')
-    @api.response(403, 'Unauthorized action')
+    @api.response(200, 'Review updated successfully', models['updated'])
+    @api.response(404, 'Review not found', models['not_found'])
+    @api.response(400, 'Invalid input data', models['invalid_input'])
+    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
     @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
@@ -138,9 +116,9 @@ class ReviewResource(Resource):
         
         return {"message": "Review updated successfully"}, 200
 
-    @api.response(200, 'Review deleted successfully')
-    @api.response(404, 'Review not found')
-    @api.response(403, 'Unauthorized action')
+    @api.response(200, 'Review deleted successfully', models['deleted'])
+    @api.response(404, 'Review not found', models['not_found'])
+    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
     @jwt_required()
     def delete(self, review_id):
         """Delete a review"""

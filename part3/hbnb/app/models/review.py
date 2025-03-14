@@ -24,10 +24,10 @@ class Review(BaseModel):
     def to_dict(self):
         return {
             "id": self.id,
-            "text": self.text,
             "rating": self.rating,
-            "user_id": self.user_id,
-            "place_id": self.place_id
+            "text": self.text,
+            "place_id": self.place_id,
+            "user_id": self.user_id
         }
 
     @validates('text')

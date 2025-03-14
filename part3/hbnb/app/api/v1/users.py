@@ -6,60 +6,57 @@ from doc_models import initialize_models
 api = Namespace('users', description='User operations')
 models = initialize_models(api)
 
-create_user_success = api.model('User Created Success', {
-    'id': fields.String(description="User id", example="7e495deb-c6a6-40e1-a264-dfae089a673f"),
-    'first_name': fields.String(description="User first name", example="John"),
-    'last_name': fields.String(description="User last name", example="Doe"),
-    'email': fields.String(description="User email", example="john@email.com")
-})
-
-user_update_model = api.model('User Update', {
-    'first_name': fields.String(description='First name of the user', example="Jane"),
-    'last_name': fields.String(description='Last name of the user', example="Doe"),
-})
-
 @api.route('/')
 class UserList(Resource):
     @api.expect(models['create_user'])
-    @api.response(201, 'User successfully created', create_user_success)
-    @api.response(400, 'Invalid input data')
+    @api.response(201, 'User successfully created', models['user_response'])
+    @api.response(400, 'Invalid input data', models['invalid_input'])
     def post(self):
         """Register a new user"""
         user_data = api.payload
+        email = user_data.get('email').lower()
 
         # if "is_admin" in user_data:
         #     api.abort(400, 'Invalid input data')
-
+        
+        existing_user = facade.get_user_by_email(email)
+        if existing_user:
+            api.abort(400, 'Email already in use')
+            
         try:
             new_user = facade.create_user(user_data)
+            user_dict = new_user.to_dict()
+            del user_dict['is_admin']
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return new_user.to_dict(), 201
+        return user_dict, 201
     
-    @api.response(200, "Users retrieved successfully")
+    @api.response(200, "Users retrieved successfully", models['users_list']['users'])
     def get(self):
         """Retrieve a list of all users"""
         all_users = facade.get_all_users()
-        return [user.to_dict() for user in all_users], 200
+        users_list = [user.to_dict() for user in all_users]
+        return users_list, 200
 
 
 @api.route('/<user_id>')
 class UserResource(Resource):
-    @api.response(200, 'User details retrieved successfully')
-    @api.response(404, 'User not found')
+    @api.response(200, 'User details retrieved successfully', models['user_response'])
+    @api.response(404, 'User not found', models['not_found'])
     def get(self, user_id):
         """Get user details by ID"""
         user = facade.get_user(user_id)
         if not user:
             api.abort(404, 'User not found')
-        return user.to_dict(), 200
+        user_dict = user.to_dict()
+        return user_dict, 200
 
-    @api.expect(user_update_model)
-    @api.response(201, 'User successfully updated')
-    @api.response(404, 'User not found')
-    @api.response(400, 'Invalid input data')
-    @api.response(403, 'Unauthorized action')
+    @api.expect( models['update_user'])
+    @api.response(201, 'User successfully updated', models['user_response'])
+    @api.response(404, 'User not found', models['not_found'])
+    @api.response(400, 'Invalid input data', models['invalid_input'])
+    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
     @jwt_required()
     def put(self, user_id):
         """Update a user"""
@@ -83,7 +80,9 @@ class UserResource(Resource):
         try:
             user.update(user_data)
             updated_user = facade.update_user(user_id, user_data)
+            user_dict = updated_user.to_dict()
+            del user_dict['is_admin']
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
 
-        return updated_user.to_dict(), 201
+        return user_dict, 201
