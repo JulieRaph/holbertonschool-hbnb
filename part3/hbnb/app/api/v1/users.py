@@ -17,10 +17,10 @@ class UserList(Resource):
         user_data = api.payload
         email = user_data.get('email').lower()
 
-        # valid_inputs = ['first_name', 'last_name', 'email', 'password']
-        # for key in user_data:
-        #     if key not in valid_inputs:
-        #         api.abort(400, f'Invalid input data: {key}')
+        valid_inputs = ['first_name', 'last_name', 'email', 'password']
+        for key in user_data:
+            if key not in valid_inputs:
+                api.abort(400, f'Invalid input data: {key}')
         
         existing_user = facade.get_user_by_email(email)
         if existing_user:
