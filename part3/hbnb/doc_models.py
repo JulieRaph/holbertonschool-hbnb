@@ -49,7 +49,7 @@ def initialize_models(api: Api):
         'title': fields.String(required=True, description='Title of the place', example='Great house'),
         'description': fields.String(description='Description of the place', example='A nice place to stay'),
         'price': fields.Float(required=True, description='Price per night', example=100.0),
-        'latitude': fields.Float(required=True, description='Latitude of the place', example=-90.0),
+        'latitude': fields.Float(required=True, description='Latitude of the place', example=-75.102),
         'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194)
     })
     
@@ -57,7 +57,7 @@ def initialize_models(api: Api):
         'title': fields.String(description='Title of the place', example='Great house at the beach'),
         'description': fields.String(description='Description of the place', example='A nice place for holidays'),
         'price': fields.Float(description='Price per night', example=150.0),
-        'latitude': fields.Float(description='Latitude of the place', example=-90.0),
+        'latitude': fields.Float(description='Latitude of the place', example=-75.102),
         'longitude': fields.Float(description='Longitude of the place', example=-122.4194),
         'amenities': fields.List(fields.String(description='List of amenity IDs'), example=["99493758-3936-4aac-8a07-835b84ce02ef"])
     })
@@ -69,8 +69,8 @@ def initialize_models(api: Api):
     })
     
     ReviewUpdate = api.model('ReviewUpdate', {
-        'text': fields.String(required=True, description='Text of the review', example="Not So Good"),
-        'rating': fields.Integer(required=True, description='Rating of the place (1-5)', example=3),
+        'text': fields.String(description='Text of the review', example="Not So Good"),
+        'rating': fields.Integer(description='Rating of the place (1-5)', example=3),
     })
     
     LoginResponse = api.model('LoginResponse', {
@@ -102,11 +102,11 @@ def initialize_models(api: Api):
     })
     
     PlaceResponse = api.inherit('PlaceResponse', PlaceId, {
-        'title': fields.String(required=True, description='Title of the place', example='Great house at the beach'),
+        'title': fields.String(description='Title of the place', example='Great house at the beach'),
         'description': fields.String(description='Description of the place', example='A nice place to stay'),
-        'price': fields.Float(required=True, description='Price per night', example=100.0),
-        'latitude': fields.Float(required=True, description='Latitude of the place', example=-90.0),
-        'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194)
+        'price': fields.Float(description='Price per night', example=100.0),
+        'latitude': fields.Float(description='Latitude of the place', example=-75.102),
+        'longitude': fields.Float(description='Longitude of the place', example=-122.4194)
     })
     
     ReviewResponse = api.inherit('ReviewResponse', ReviewId, {
@@ -172,38 +172,38 @@ def initialize_models(api: Api):
     })
     
     AdminUserUpdate = api.model('AdminUserUpdate', {
-        'first_name': fields.String(required=True, description="User first name", example="Peter"),
-        'last_name': fields.String(required=True, description="User last name", example="Parker"),
-        'email': fields.String(required=True, description="User email", example="peter@spiderman.com"),
-        'password': fields.String(required=True, description="User password", example="Sp1derman!"),
+        'first_name': fields.String(description="User first name", example="Peter"),
+        'last_name': fields.String(description="User last name", example="Parker"),
+        'email': fields.String(description="User email", example="peter@spiderman.com"),
+        'password': fields.String(description="User password", example="Sp1derman!"),
         'is_admin': fields.Boolean(description="role authorization", example=False)
     })
     
     AmenityUpdate = api.model('AmenityUpdate', {
-        'name': fields.String(required=True, description='Name of the amenity', example="Wi-Fi")
+        'name': fields.String(description='Name of the amenity', example="Wi-Fi")
     })
     
     PlaceByIdResponse = api.model('PlaceByIdResponse', {
         'id': fields.String(description="Place id", example="a6e9d55e-c8d1-4268-bb65-4c19a5206a08"),
-        'title': fields.String(required=True, description='Title of the place', example='Great house at the beach'),
+        'title': fields.String(description='Title of the place', example='Great house at the beach'),
         'description': fields.String(description='Description of the place', example='A nice place to stay'),
-        'price': fields.Float(required=True, description='Price per night', example=100.0),
-        'latitude': fields.Float(required=True, description='Latitude of the place', example=-90.0),
-        'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
+        'price': fields.Float(description='Price per night', example=100.0),
+        'latitude': fields.Float(description='Latitude of the place', example=-75.102),
+        'longitude': fields.Float(description='Longitude of the place', example=-122.4194),
         'owner': fields.Nested(UserResponse),
         'amenities': fields.List(fields.Nested(AmenityResponse), description='List of detailed amenities'),
         'reviews': fields.List(fields.Nested(ReviewResponse), description='List of detailed reviews'),
     })
     
-    ReviewResponseOpt = api.model('ReviewResponseOpt', {
-        'id': fields.String(description="Review id", example="82fe063d-fe6e-4b84-a12d-4400df168834"),
-        'rating': fields.String(description="Rating", example="5"),
-        'text': fields.String(description="Text", example="Super cool!"),
-        'user_id': fields.String(description="User id", example="c28c8c27-b900-409b-ab4d-cc215cb2f518")
-    })
-    
     ReviewsPlaceList = api.model('ReviewsPlaceList', {
-        'reviews': fields.List(fields.Nested(ReviewResponse))
+        'ReviewsPlace': fields.List(fields.Raw, example=[
+            {
+                'id': "82fe063d-fe6e-4b84-a12d-4400df168834",
+                'rating': 5,
+                'text': "Super cool!",
+                'user_id': "c28c8c27-b900-409b-ab4d-cc215cb2f518"
+            }
+        ])
     })
     
     return {
@@ -233,7 +233,7 @@ def initialize_models(api: Api):
         "PlaceResponse": PlaceResponse,
         "PlacesList": PlacesList['Places'],
         "PlaceByIdResponse": PlaceByIdResponse,
-        "ReviewsPlaceList": ReviewsPlaceList['reviews'],
+        "ReviewsPlaceList": ReviewsPlaceList['ReviewsPlace'],
         # Review
         "ReviewCreate": ReviewCreate,
         "ReviewResponse": ReviewResponse,

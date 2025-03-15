@@ -2,13 +2,10 @@ from flask import jsonify
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app import db
-import uuid
 from doc_models import initialize_models
 
 api = Namespace('places', description='Place operations')
 models = initialize_models(api)
-
 
 @api.route('/')
 class PlaceList(Resource):
