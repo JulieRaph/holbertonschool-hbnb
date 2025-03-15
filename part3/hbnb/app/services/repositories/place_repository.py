@@ -3,6 +3,7 @@ from app.models.amenity import Amenity
 from app.models.review import Review
 from app import db
 from app.persistence.repository import SQLAlchemyRepository
+from flask import has_app_context
 
 class PlaceRepository(SQLAlchemyRepository):
     def __init__(self):
@@ -12,6 +13,7 @@ class PlaceRepository(SQLAlchemyRepository):
         place.place_amenities = []
         amenities_ids = []
         for amenity_id in amenities:
+            print(f"Buscando amenity con id: {amenity_id}")
             amenity = Amenity.query.filter_by(id=amenity_id).first()
             if amenity:
                 amenities_ids.append(amenity)
@@ -23,26 +25,17 @@ class PlaceRepository(SQLAlchemyRepository):
         
     def add(self, place, amenities):
         db.session.add(place)
-
         self.add_amenities(place, amenities)
-
-        db.session.flush()
         db.session.commit()
         return place
     
     def update(self, place_id, place_data, amenities):
-        place = self.get(place_id)
-        if place:
-            for key, value in place_data.items():
-                setattr(place, key, value)
+        place = Place.query.get(place_id)
+        place.update(place_data)     
+        self.add_amenities(place, amenities)
+        db.session.commit()
+        return place
 
-            self.add_amenities(place, amenities)
-
-            db.session.flush()
-            db.session.commit()
-            return place
-        return None 
-    
     def delete(self, place_id):
         place = self.get(place_id)
         if place:

@@ -78,14 +78,14 @@ class PlaceResource(Resource):
     @api.doc(security='token')
     def put(self, place_id):
         """Update a place's information"""
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
         user = facade.get_user(current_user)
         place = facade.get_place(place_id)
         
         if not place:
             api.abort(404, "Place not found")
 
-        if not user or place.owner_id != user.get('id'):
+        if not user or place.owner_id != user.id:
             api.abort(403,'Unauthorized action')
 
         place_data = api.payload
@@ -95,8 +95,7 @@ class PlaceResource(Resource):
             api.abort(400, 'Invalid input data')
 
         try:
-            place.update(place_data)
-            facade.update_place(place_id, place.to_dict(), amenities)
+            facade.update_place(place_id, place_data, amenities)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         

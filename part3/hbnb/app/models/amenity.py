@@ -3,8 +3,7 @@
 from app import db
 import uuid
 from .base import BaseModel
-from .associations import place_amenity
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy.orm import validates
 
 
 class Amenity(BaseModel):
@@ -12,7 +11,7 @@ class Amenity(BaseModel):
     __tablename__ = 'amenities'
 
     name = db.Column(db.String(50), nullable=False)
-
+    
     @validates('name')
     def validate_name(self, key, value):
         if not isinstance(value, str):

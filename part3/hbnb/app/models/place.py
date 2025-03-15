@@ -19,7 +19,7 @@ class Place(BaseModel):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = relationship("User", back_populates="places")
     reviews = relationship('Review', backref='places', lazy=True)
-    place_amenities = db.relationship('Amenity', secondary=place_amenity, backref='places')
+    place_amenities = db.relationship('Amenity', secondary=place_amenity, lazy='subquery', backref=db.backref('places', lazy=True))
 
     def add_review(self, review):
         """Add a review to the place."""

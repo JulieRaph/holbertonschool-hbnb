@@ -168,8 +168,7 @@ class AdminPlaceModify(Resource):
             api.abort(400, 'Invalid input data')
 
         try:
-            place.update(place_data)
-            facade.update_place(place_id, place.to_dict(), amenities)
+            facade.update_place(place_id, place_data, amenities)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
         
