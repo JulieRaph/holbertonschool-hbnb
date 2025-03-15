@@ -7,6 +7,7 @@ from doc_models import initialize_models
 api = Namespace('amenities', description='Amenity operations')
 models = initialize_models(api)
 
+
 @api.route('/')
 class AmenityList(Resource):
     @api.response(200, 'List of amenities retrieved successfully', models['AmenitiesList'])

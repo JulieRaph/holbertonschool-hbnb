@@ -7,21 +7,6 @@ from app import db
 api = Namespace('reviews', description='User operations')
 models = initialize_models(api)
 
-review_update_model = api.model('Review Update', {
-    'text': fields.String(description='Text of the review', example="Not so cool!"),
-    'rating': fields.Integer(description='Rating of the place (1-5)', example=3),
-})
-
-place_model = api.model('Place', {
-    'title': fields.String(required=True, description='Title of the place', example="Cozy Apartment"),
-    'description': fields.String(description='Description of the place', example="A nice place to stay"),
-    'price': fields.Float(required=True, description='Price per night', example=100.0),
-    'latitude': fields.Float(required=True, description='Latitude of the place', example=37.7749),
-    'longitude': fields.Float(required=True, description='Longitude of the place', example=-122.4194),
-    'owner_id': fields.String(required=True, description='Owner of the place', example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-    'amenities': fields.List(fields.String, description="List of amenities ID's", example=["1fa85f64-5717-4562-b3fc-2c963f66afa6"]),
-})
-
 
 @api.route('/')
 class ReviewList(Resource):

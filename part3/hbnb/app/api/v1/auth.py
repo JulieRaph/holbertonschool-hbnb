@@ -6,6 +6,7 @@ from doc_models import initialize_models
 api = Namespace('auth', description='Authentication operations')
 models = initialize_models(api)
 
+
 @api.route('/login')
 class Login(Resource):
     @api.expect(models['Login'])
