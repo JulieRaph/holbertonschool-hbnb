@@ -201,7 +201,6 @@ def initialize_models(api: Api):
                 'id': "82fe063d-fe6e-4b84-a12d-4400df168834",
                 'rating': 5,
                 'text': "Super cool!",
-                'user_id': "c28c8c27-b900-409b-ab4d-cc215cb2f518"
             }
         ])
     })
