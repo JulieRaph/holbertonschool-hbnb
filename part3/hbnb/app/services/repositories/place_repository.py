@@ -8,19 +8,33 @@ class PlaceRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Place)
         
+    def add_amenities(self, place, amenities):
+        place.place_amenities = []
+        amenities_ids = []
+        for amenity_id in amenities:
+            amenity = Amenity.query.filter_by(id=amenity_id).first()
+            if amenity:
+                amenities_ids.append(amenity)
+            else:
+                raise ValueError(f"Amenity with ID {amenity_id} not found")
+
+        place.place_amenities.extend(amenities_ids)
+        
+        
     def add(self, place, amenities):
         db.session.add(place)
 
-        if amenities:
-            amenities_ids = []
-            for amenity_id in amenities:
-                amenity = Amenity.query.filter_by(id=amenity_id).first()
-                if amenity:
-                    amenities_ids.append(amenity)
-                else:
-                    raise ValueError(f"Amenity with ID {amenity_id} not found")
+        # if amenities:
+        #     amenities_ids = []
+        #     for amenity_id in amenities:
+        #         amenity = Amenity.query.filter_by(id=amenity_id).first()
+        #         if amenity:
+        #             amenities_ids.append(amenity)
+        #         else:
+        #             raise ValueError(f"Amenity with ID {amenity_id} not found")
 
-            place.place_amenities.extend(amenities_ids)
+        #     place.place_amenities.extend(amenities_ids)
+        self.add_amenities(place, amenities)
 
         db.session.flush()
         db.session.commit()
@@ -32,17 +46,18 @@ class PlaceRepository(SQLAlchemyRepository):
             for key, value in place_data.items():
                 setattr(place, key, value)
 
-            if amenities is not None:
-                place.place_amenities = []
-                amenities_ids = []
-                for amenity_id in amenities:
-                    amenity = Amenity.query.filter_by(id=amenity_id).first()
-                    if amenity:
-                        amenities_ids.append(amenity)
-                    else:
-                        raise ValueError(f"Amenity with ID {amenity_id} not found")
+            # if amenities is not None:
+            #     place.place_amenities = []
+            #     amenities_ids = []
+            #     for amenity_id in amenities:
+            #         amenity = Amenity.query.filter_by(id=amenity_id).first()
+            #         if amenity:
+            #             amenities_ids.append(amenity)
+            #         else:
+            #             raise ValueError(f"Amenity with ID {amenity_id} not found")
 
-                place.place_amenities.extend(amenities_ids)
+            #     place.place_amenities.extend(amenities_ids)
+            self.add_amenities(place, amenities)
 
             db.session.flush()
             db.session.commit()

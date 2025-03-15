@@ -8,18 +8,18 @@ models = initialize_models(api)
 
 @api.route('/')
 class UserList(Resource):
-    @api.expect(models['create_user'])
-    @api.response(201, 'User successfully created', models['user_response'])
-    @api.response(400, 'Invalid input data', models['invalid_input'])
+    @api.expect(models['UserCreate'])
+    @api.response(201, 'User successfully created', models['UserResponse'])
+    @api.response(400, 'Invalid input data', models['InvalidInput'])
     def post(self):
         """Register a new user"""
         user_data = api.payload
         email = user_data.get('email').lower()
 
-        valid_inputs = ['first_name', 'last_name', 'email', 'password']
-        for key in user_data:
-            if key not in valid_inputs:
-                api.abort(400, f'Invalid input data: {key}')
+        # valid_inputs = ['first_name', 'last_name', 'email', 'password']
+        # for key in user_data:
+        #     if key not in valid_inputs:
+        #         api.abort(400, f'Invalid input data: {key}')
         
         existing_user = facade.get_user_by_email(email)
         if existing_user:
@@ -34,7 +34,7 @@ class UserList(Resource):
 
         return user_dict, 201
     
-    @api.response(200, "Users retrieved successfully", models['users_list']['users'])
+    @api.response(200, "Users retrieved successfully", models['UsersList'])
     def get(self):
         """Retrieve a list of all users"""
         all_users = facade.get_all_users()
@@ -46,8 +46,8 @@ class UserList(Resource):
 
 @api.route('/<user_id>')
 class UserResource(Resource):
-    @api.response(200, 'User details retrieved successfully', models['user_response'])
-    @api.response(404, 'User not found', models['not_found'])
+    @api.response(200, 'User details retrieved successfully', models['UserResponse'])
+    @api.response(404, 'User not found', models['NotFound'])
     def get(self, user_id):
         """Get user details by ID"""
         user = facade.get_user(user_id)
@@ -57,12 +57,13 @@ class UserResource(Resource):
         del user_dict['is_admin']
         return user_dict, 200
 
-    @api.expect( models['update_user'])
-    @api.response(201, 'User successfully updated', models['user_response'])
-    @api.response(404, 'User not found', models['not_found'])
-    @api.response(400, 'Invalid input data', models['invalid_input'])
-    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
+    @api.expect(models['UserUpdate'])
+    @api.response(201, 'User successfully updated', models['UserUpdateResponse'])
+    @api.response(404, 'User not found', models['NotFound'])
+    @api.response(400, 'Invalid input data', models['InvalidInput'])
+    @api.response(403, 'Unauthorized action', models['UnauthorizedAction'])
     @jwt_required()
+    @api.doc(security='token')
     def put(self, user_id):
         """Update a user"""
         current_user = get_jwt_identity().get('id')

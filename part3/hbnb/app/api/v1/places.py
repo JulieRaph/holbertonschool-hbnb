@@ -12,11 +12,12 @@ models = initialize_models(api)
 
 @api.route('/')
 class PlaceList(Resource):
-    @api.expect(models['create_place'])
-    @api.response(201, 'Place successfully created', models['place_response'])
-    @api.response(400, 'Invalid input data', models['invalid_input'])
-    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
+    @api.expect(models['PlaceCreate'])
+    @api.response(201, 'Place successfully created', models['PlaceResponse'])
+    @api.response(400, 'Invalid input data', models['InvalidInput'])
+    @api.response(403, 'Unauthorized action', models['UnauthorizedAction'])
     @jwt_required()
+    @api.doc(security='token')
     def post(self):
         """Register a new place"""
         current_user = get_jwt_identity().get('id')
@@ -27,9 +28,7 @@ class PlaceList(Resource):
 
         place_data = api.payload
         place_data["owner_id"] = user.id
-        amenities = []
-        if 'amenities' in place_data:
-            amenities = place_data.pop("amenities")
+        amenities = place_data.pop("amenities", [])
 
         try:    
             new_place = facade.create_place(place_data, amenities)
@@ -39,7 +38,7 @@ class PlaceList(Resource):
 
         return place_dict, 201
 
-    @api.response(200, 'List of places retrieved successfully', models['places_list']['places'])
+    @api.response(200, 'List of places retrieved successfully', models['PlacesList'])
     def get(self):
         """Retrieve a list of all places"""
         all_places = facade.get_all_places()
@@ -48,8 +47,8 @@ class PlaceList(Resource):
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
-    @api.response(200, 'Place details retrieved successfully', models['placeById_response'])
-    @api.response(404, 'Place not found', models['not_found'])
+    @api.response(200, 'Place details retrieved successfully', models['PlaceByIdResponse'])
+    @api.response(404, 'Place not found', models['NotFound'])
     def get(self, place_id):
         """Get place details by ID"""
         place = facade.get_place(place_id)
@@ -70,12 +69,13 @@ class PlaceResource(Resource):
 
         return place_dict, 200
 
-    @api.expect()
-    @api.response(200, 'Place updated successfully', models['updated'])
-    @api.response(404, 'Place not found', models['not_found'])
-    @api.response(400, 'Invalid input data', models['invalid_input'])
-    @api.response(403, 'Unauthorized action', models['unauthorized_action'])
+    @api.expect(models['PlaceUpdate'])
+    @api.response(200, 'Place updated successfully', models['Updated'])
+    @api.response(404, 'Place not found', models['NotFound'])
+    @api.response(400, 'Invalid input data', models['InvalidInput'])
+    @api.response(403, 'Unauthorized action', models['UnauthorizedAction'])
     @jwt_required()
+    @api.doc(security='token')
     def put(self, place_id):
         """Update a place's information"""
         current_user = get_jwt_identity()
@@ -89,9 +89,7 @@ class PlaceResource(Resource):
             api.abort(403,'Unauthorized action')
 
         place_data = api.payload
-        amenities = []
-        if 'amenities' in place_data:
-            amenities = place_data.pop("amenities")
+        amenities = place_data.pop("amenities", [])
         
         if "owner_id" in place_data:
             api.abort(400, 'Invalid input data')
@@ -106,8 +104,8 @@ class PlaceResource(Resource):
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully', models['place_reviews_list']['place_reviews'])
-    @api.response(404, 'Place not found', models['not_found'])
+    @api.response(200, 'List of reviews for the place retrieved successfully', models['ReviewsPlaceList'])
+    @api.response(404, 'Place not found', models['NotFound'])
     def get(self, place_id):
         """Get all reviews for a specific place"""
         place = facade.get_place(place_id)

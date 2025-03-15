@@ -8,9 +8,9 @@ models = initialize_models(api)
 
 @api.route('/login')
 class Login(Resource):
-    @api.expect(models['login'])
-    @api.response(200, 'User successfully loged', models['login_response'])
-    @api.response(401, 'Invalid credentials', models['invalid_credentials'])
+    @api.expect(models['Login'])
+    @api.response(200, 'User successfully loged', models['LoginResponse'])
+    @api.response(401, 'Invalid credentials', models['InvalidCredentials'])
     def post(self):
         """Authenticate user and return a JWT token"""
         print("Login request received")

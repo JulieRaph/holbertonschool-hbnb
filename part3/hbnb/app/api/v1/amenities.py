@@ -9,7 +9,7 @@ models = initialize_models(api)
 
 @api.route('/')
 class AmenityList(Resource):
-    @api.response(200, 'List of amenities retrieved successfully', models['amenities_list']['amenities'])
+    @api.response(200, 'List of amenities retrieved successfully', models['AmenitiesList'])
     def get(self):
         """Retrieve a list of all amenities"""
         all_amenities = facade.get_all_amenities()
@@ -18,8 +18,8 @@ class AmenityList(Resource):
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
-    @api.response(200, 'Amenity details retrieved successfully', models['amenity_response'])
-    @api.response(404, 'Amenity not found', models['not_found'])
+    @api.response(200, 'Amenity details retrieved successfully', models['AmenityResponse'])
+    @api.response(404, 'Amenity not found', models['NotFound'])
     def get(self, amenity_id):
         """Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
