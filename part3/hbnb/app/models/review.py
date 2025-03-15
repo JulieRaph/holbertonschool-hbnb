@@ -12,28 +12,34 @@ class Review(BaseModel):
 
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
-    places = db.relationship('Place', secondary=db.places_reviews, lazy='subquery',
-                              backref=db.backref('reviews', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def update(self, data):
         if 'text' in data:
             self.text = data['text']
         if 'rating' in data:
             self.rating = data['rating']
+            
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "rating": self.rating,
+            "text": self.text,
+            "place_id": self.place_id,
+            "user_id": self.user_id
+        }
 
     @validates('text')
-    def validates_text(self, key, value):
+    def validate_text(self, key, value):
         if not isinstance(value, str):
             raise TypeError("Text is not valid")
         if not value:
             raise TypeError("Text is required")
         return value
 
-
     @validates('rating')
-    def validates_rating(self, key, value):
+    def validate_rating(self, key, value):
         if not value:
             raise TypeError("Rating is required")
         if not isinstance(value, int):
@@ -42,28 +48,18 @@ class Review(BaseModel):
             raise ValueError("Rating must be between 1 and 5")
         return value
 
+    # @validates('place_id')
+    # def validate_place_id(self, key, value):
+    #     if not value:
+    #         raise TypeError("Place is required")
+    #     if not isinstance(value, str):
+    #         raise TypeError("Place is not valid")
+    #     return value
 
-    @validates('place_id')
-    def validates_place_id(self, key, value):
-        if not value:
-            raise TypeError("Place is required")
-        if not isinstance(value, str):
-            raise TypeError("Place is not valid")
-        return value
-
-    @validates('user_id')
-    def validates_user_id(self, key, value):
-        if not value:
-            raise TypeError("User is required")
-        if not isinstance(value, str):
-            raise TypeError("User is not valid")
-        return value
-    
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "text": self.text,
-            "rating": self.rating,
-            "user_id": self.user_id,
-            "place_id": self.place_id
-        }
+    # @validates('user_id')
+    # def validate_user_id(self, key, value):
+    #     if not value:
+    #         raise TypeError("User is required")
+    #     if not isinstance(value, str):
+    #         raise TypeError("User is not valid")
+    #     return value

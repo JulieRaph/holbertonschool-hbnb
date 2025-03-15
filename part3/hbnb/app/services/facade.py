@@ -1,6 +1,9 @@
 # from app.persistence.repository import InMemoryRepository
 from app.persistence.repository import SQLAlchemyRepository
 from app.services.repositories.user_repository import UserRepository
+from app.services.repositories.place_repository import PlaceRepository
+from app.services.repositories.amenity_repository import AmenityRepository
+from app.services.repositories.review_repository import ReviewRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
@@ -9,10 +12,10 @@ from app.models.review import Review
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
-        # self.place_repo = SQLAlchemyRepository(Place)
-        # self.review_repo = SQLAlchemyRepository(Review)
-        # self.amenity_repo = SQLAlchemyRepository(Amenity)
+        self.user_repo = UserRepository()
+        self.place_repo = PlaceRepository()
+        self.review_repo = ReviewRepository()
+        self.amenity_repo = AmenityRepository()
 
     # User method
     def create_user(self, user_data):
@@ -23,7 +26,7 @@ class HBnBFacade:
 
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
- 
+    
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
 
@@ -55,9 +58,9 @@ class HBnBFacade:
         return self.amenity_repo.get(amenity_id)
 
     # Place method
-    def create_place(self, place_data):
+    def create_place(self, place_data, amenities):
         place = Place(**place_data)
-        self.place_repo.add(place)
+        self.place_repo.add(place, amenities)
         return place
 
     def get_place(self, place_id):
@@ -66,8 +69,8 @@ class HBnBFacade:
     def get_all_places(self):
         return self.place_repo.get_all()
 
-    def update_place(self, place_id, place_data):
-        self.place_repo.update(place_id, place_data)
+    def update_place(self, place_id, place_data, amenities):
+        self.place_repo.update(place_id, place_data, amenities)
         return self.place_repo.get(place_id)
     
     def delete_place(self, place_id):

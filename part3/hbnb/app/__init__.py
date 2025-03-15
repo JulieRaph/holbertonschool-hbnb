@@ -18,7 +18,15 @@ from app.api.v1.admin import api as admin_ns
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', doc='/api/v1/')
+    authorizations = {
+        'token': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': 'Add your JWT token, e.g., "Bearer <token>".'
+        }
+    }
+    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', authorizations=authorizations, doc='/api/v1/')
     
     api.add_namespace(users_ns, path='/api/v1/users')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')

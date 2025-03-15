@@ -4,7 +4,7 @@
 from app import bcrypt, db
 import uuid
 from .base import BaseModel
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from sqlalchemy import func
 import re
 
@@ -17,6 +17,7 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    places = relationship('Place', backref='users', lazy=True)
     
     places = db.relationship('Place', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
@@ -33,6 +34,8 @@ class User(BaseModel):
             self.last_name = data["last_name"]
         if "email" in data:
             self.email = data["email"]
+        if "is_admin" in data:
+            self.is_admin = data["is_admin"]
 
     def to_dict(self):
         return {
@@ -40,25 +43,25 @@ class User(BaseModel):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
+            "is_admin": self.is_admin
         }
         
     def hash_password(self, password):
         """Hashes the password before storing it."""
-        pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$")
+        pattern = re.compile("^[A-Za-z\d@$!#%*?&]{8,}$")
         if not isinstance(password, str):
             raise TypeError("Password must be a string")
         if not password:
             raise TypeError("Password is required")
         mat = re.search(pattern, password)
         if not mat:
-            raise ValueError("Password must have at least: 8 characters with 1 lowercase, 1 uppercase, 1 number and 1 special character")
+            raise ValueError("Password must have at least 8 characters")
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     def verify_password(self, password):
         """Verifies if the provided password matches the hashed password."""
         return bcrypt.check_password_hash(self.password, password)
     
-
     @validates('first_name', 'last_name')
     def validate_first_name(self, key, value):
         if not isinstance(value, str):
@@ -77,10 +80,7 @@ class User(BaseModel):
             r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$", value
         ):
             raise ValueError("Email is not valid")
-        existing_user = User.query.filter(value.lower() == func.lower(User.email)).first()
-        if existing_user:
-            raise ValueError("Email already registered")
-        return value
+        return value.lower()
 
     @validates('is_admin')
     def validate_is_admin(self, key, value):
