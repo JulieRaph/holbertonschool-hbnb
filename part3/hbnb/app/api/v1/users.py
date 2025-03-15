@@ -6,6 +6,7 @@ from doc_models import initialize_models
 api = Namespace('users', description='User operations')
 models = initialize_models(api)
 
+
 @api.route('/')
 class UserList(Resource):
     @api.expect(models['UserCreate'])

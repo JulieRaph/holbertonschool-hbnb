@@ -47,19 +47,3 @@ class Review(BaseModel):
         if value < 1 or value > 5:
             raise ValueError("Rating must be between 1 and 5")
         return value
-
-    # @validates('place_id')
-    # def validate_place_id(self, key, value):
-    #     if not value:
-    #         raise TypeError("Place is required")
-    #     if not isinstance(value, str):
-    #         raise TypeError("Place is not valid")
-    #     return value
-
-    # @validates('user_id')
-    # def validate_user_id(self, key, value):
-    #     if not value:
-    #         raise TypeError("User is required")
-    #     if not isinstance(value, str):
-    #         raise TypeError("User is not valid")
-    #     return value
