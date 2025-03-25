@@ -14,12 +14,6 @@ class Review(BaseModel):
     text = db.Column(db.Text, nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    def update(self, data):
-        if 'text' in data:
-            self.text = data['text']
-        if 'rating' in data:
-            self.rating = data['rating']
             
     def to_dict(self):
         return {

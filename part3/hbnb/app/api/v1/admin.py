@@ -24,8 +24,14 @@ class AdminUserCreate(Resource):
             api.abort(403, 'Admin privileges required')
             
         user_data = api.payload
+        
+        valid_inputs = ["first_name", "last_name", "email", "password"]
+        for input in user_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
         email = user_data.get('email')
-         
+        
         if facade.get_user_by_email(email):
             api.abort(400, 'Email already registered')
 
@@ -59,6 +65,12 @@ class AdminUserModify(Resource):
             api.abort(404, 'User not found')
 
         user_data = api.payload
+        
+        valid_inputs = ["first_name", "last_name", "email", "password"]
+        for input in user_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
         email = user_data.get('email')
 
         if email:
@@ -67,7 +79,6 @@ class AdminUserModify(Resource):
                 api.abort(400, 'Email already in use')
 
         try:
-            user.update(user_data)
             updated_user = facade.update_user(user_id, user.to_dict())
             user_dict = updated_user.to_dict()
         except (ValueError, TypeError) as e:
@@ -92,6 +103,11 @@ class AdminAmenityCreate(Resource):
             api.abort(403, 'Admin privileges required')
 
         amenity_data = api.payload
+        
+        valid_inputs = ["name"]
+        for input in amenity_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
 
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity:
@@ -128,6 +144,11 @@ class AdminAmenityModify(Resource):
             api.abort(404, "Amenity not found")
         
         amenity_data = api.payload
+        
+        valid_inputs = ["name"]
+        for input in amenity_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
 
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity and existing_amenity.id != amenity.id:
@@ -162,10 +183,13 @@ class AdminPlaceModify(Resource):
             api.abort(404, "Place not found")
 
         place_data = api.payload
+        
+        valid_inputs = ["title", "description", "price", "latitude", "longitude", "amenities"]
+        for input in place_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
         amenities = place_data.pop("amenities", [])
-
-        if "owner_id" in place_data:
-            api.abort(400, 'Invalid input data')
 
         try:
             facade.update_place(place_id, place_data, amenities)
@@ -220,10 +244,9 @@ class AdminReviewModify(Resource):
         valid_inputs = ["rating", "text"]
         for input in valid_inputs:
             if input not in review_data:
-                api.abort(400, "Invalid input data")
+                api.abort(400, f"Invalid input data: {input}")
 
         try:
-            review.update(review_data)
             facade.update_review(review_id, review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))

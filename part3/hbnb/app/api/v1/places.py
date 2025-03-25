@@ -24,6 +24,12 @@ class PlaceList(Resource):
             api.abort(403, "Unauthorized action")
 
         place_data = api.payload
+        
+        valid_inputs = ["title", "description", "price", "latitude", "longitude", "amenities"]
+        for input in place_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
         place_data["owner_id"] = user.id
         amenities = place_data.pop("amenities", [])
 
@@ -86,10 +92,13 @@ class PlaceResource(Resource):
             api.abort(403,'Unauthorized action')
 
         place_data = api.payload
-        amenities = place_data.pop("amenities", [])
         
-        if "owner_id" in place_data:
-            api.abort(400, 'Invalid input data')
+        valid_inputs = ["title", "description", "price", "latitude", "longitude", "amenities"]
+        for input in place_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
+        amenities = place_data.pop("amenities", [])
 
         try:
             facade.update_place(place_id, place_data, amenities)

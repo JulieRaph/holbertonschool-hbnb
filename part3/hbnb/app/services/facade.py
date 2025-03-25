@@ -28,7 +28,7 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
     
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_by_attribute(email)
 
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
@@ -45,7 +45,7 @@ class HBnBFacade:
         return amenity
 
     def get_amenity_by_name(self, name):
-        return self.amenity_repo.get_by_attribute('name', name)
+        return self.amenity_repo.get_by_attribute(name)
 
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)

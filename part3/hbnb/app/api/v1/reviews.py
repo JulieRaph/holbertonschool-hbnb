@@ -23,6 +23,11 @@ class ReviewList(Resource):
         
         review_data = api.payload
         
+        valid_inputs = ["rating", "text", "place_id"]
+        for input in review_data:
+            if input not in valid_inputs:
+                api.abort(400, f"Invalid input data: {input}")
+        
         place = facade.get_place(review_data.get("place_id"))
         
         if not place:
@@ -93,10 +98,9 @@ class ReviewResource(Resource):
         valid_inputs = ["rating", "text"]
         for input in valid_inputs:
             if input not in review_data:
-                api.abort(400, "Invalid input data")
+                api.abort(400, f"Invalid input data: {input}")
 
         try:
-            review.update(review_data)
             facade.update_review(review_id, review_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))

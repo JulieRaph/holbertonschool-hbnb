@@ -15,12 +15,12 @@ class UserList(Resource):
     def post(self):
         """Register a new user"""
         user_data = api.payload
-        email = user_data.get('email').lower()
+        email = user_data.get('email')
 
-        valid_inputs = ['first_name', 'last_name', 'email', 'password']
-        for key in user_data:
-            if key not in valid_inputs:
-                api.abort(400, f'Invalid input data: {key}')
+        # valid_inputs = ['first_name', 'last_name', 'email', 'password']
+        # for input in user_data:
+        #     if input not in valid_inputs:
+        #         api.abort(400, f'Invalid input data: {input}')
         
         existing_user = facade.get_user_by_email(email)
         if existing_user:
@@ -80,12 +80,11 @@ class UserResource(Resource):
         user_data = api.payload
         
         valid_inputs = ["first_name", "last_name"]
-        for key in user_data:
-            if key not in valid_inputs:
-                api.abort(400, f'Invalid input data: {key}')
+        for input in user_data:
+            if input not in valid_inputs:
+                api.abort(400, f'Invalid input data: {input}')
 
         try:
-            user.update(user_data)
             updated_user = facade.update_user(user_id, user_data)
             user_dict = updated_user.to_dict()
             del user_dict['is_admin']
