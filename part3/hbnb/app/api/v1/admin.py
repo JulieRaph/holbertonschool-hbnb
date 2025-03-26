@@ -25,7 +25,7 @@ class AdminUserCreate(Resource):
             
         user_data = api.payload
         
-        valid_inputs = ["first_name", "last_name", "email", "password"]
+        valid_inputs = ["first_name", "last_name", "email", "password", "is_admin"]
         for input in user_data:
             if input not in valid_inputs:
                 api.abort(400, f"Invalid input data: {input}")
@@ -66,7 +66,7 @@ class AdminUserModify(Resource):
 
         user_data = api.payload
         
-        valid_inputs = ["first_name", "last_name", "email", "password"]
+        valid_inputs = ["first_name", "last_name", "email", "password", "is_admin"]
         for input in user_data:
             if input not in valid_inputs:
                 api.abort(400, f"Invalid input data: {input}")
@@ -79,7 +79,7 @@ class AdminUserModify(Resource):
                 api.abort(400, 'Email already in use')
 
         try:
-            updated_user = facade.update_user(user_id, user.to_dict())
+            updated_user = facade.update_user(user_id, user_data)
             user_dict = updated_user.to_dict()
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))

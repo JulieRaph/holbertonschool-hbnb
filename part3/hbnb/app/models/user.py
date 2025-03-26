@@ -17,9 +17,7 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
-    places = relationship('Place', backref='users', lazy=True)
-    
-    places = db.relationship('Place', backref='user', lazy=True)
+    places = db.relationship('Place', back_populates='owner', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
 
 
