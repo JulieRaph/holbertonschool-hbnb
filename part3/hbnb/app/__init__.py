@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask
 from flask_restx import Api
 from flask_bcrypt import Bcrypt
@@ -7,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 jwt = JWTManager()
 db = SQLAlchemy()
+load_dotenv()
 
 from app.api.v1.users import api as users_ns
 from app.api.v1.amenities import api as amenities_ns
@@ -14,6 +16,7 @@ from app.api.v1.places import api as places_ns
 from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.auth import api as auth_ns
 from app.api.v1.admin import api as admin_ns
+from app.services.utils.create_admin import create_admin_user
 from app.services.utils.db_populate import db_populate
 
 def create_app(config_class="config.DevelopmentConfig"):
@@ -42,6 +45,7 @@ def create_app(config_class="config.DevelopmentConfig"):
 
     with app.app_context():
         db.create_all()
+        create_admin_user()
         db_populate()
 
     return app
