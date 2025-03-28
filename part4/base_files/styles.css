@@ -106,3 +106,18 @@ main {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s ease;
 }
+
+footer {
+    background-color: #fae2f3;
+    color: #797979;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+}
+
+footer a {
+    color: #797979;
+    font-size: 0.9rem;
+}
