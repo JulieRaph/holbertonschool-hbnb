@@ -36,6 +36,21 @@ main {
     padding: 2rem;
 }
 
+footer {
+    background-color: #fae2f3;
+    color: #797979;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    bottom: 0;
+}
+
+footer a {
+    color: #797979;
+    font-size: 0.9rem;
+}
+
+
 /*--------------- Login Page ---------------*/
 
 .login-button {
@@ -105,19 +120,13 @@ main {
     transition: background-color 0.3s, color 0.3s ease;
 }
 
-footer {
-    background-color: #fae2f3;
-    color: #797979;
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
+.login-page footer {
+    position: fixed;
+    left: 0;
     bottom: 0;
+    width: 100%;
 }
 
-footer a {
-    color: #797979;
-    font-size: 0.9rem;
-}
 
 /*--------------- Index Page ---------------*/
 
@@ -181,5 +190,129 @@ footer a {
     margin-bottom: 1rem;
 }
 
+.filter-price input:focus {
+    border-color: #d0c3c3;
+    outline: none;
+    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
+}
+
+
 /*--------------- Place Page ---------------*/
+
+.place-info {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 1.5rem;
+    border: 1px solid #d0c3c3;
+    padding: 1rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.place-info p {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.place-info p:last-child {
+    margin-bottom: 0;
+}
+
+.title-place {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.title-h2-place {
+    margin-top: 3rem;
+    text-align: left;
+}
+
+.review-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+    margin-bottom: 45px;
+    justify-content: center;
+}
+
+.review-card {
+    border: 1px solid #d0c3c3;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.review-card p {
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.add-review-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+    margin-bottom: 45px;
+    justify-content: center;
+}
+
+.add-review-card {
+    border: 1px solid #d0c3c3;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.add-review-card label {
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.add-review-card button {
+    align-self: flex-end;
+    background-color: #ffff;
+    color: #333;
+    border: 1px solid #d0c3c3;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s ease;
+}
+
+.add-review-card button:hover {
+    background-color: #fae2f3;
+}
+
+.add-review-card textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d0c3c3;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.add-review-card textarea:focus {
+    border-color: #d0c3c3;
+    outline: none;
+    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
+}
+
+
+/*--------------- Add Review Page ---------------*/
 
