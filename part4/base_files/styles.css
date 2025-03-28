@@ -313,6 +313,99 @@ footer a {
     box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
 }
 
+.add-a-review-button {
+    background-color: #fff;
+    color: #f003a9;
+    border: 1px solid #f003a9;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
 
 /*--------------- Add Review Page ---------------*/
 
+.add-review-page footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.add-review-card-page {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.add-review-card-page textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d0c3c3;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+
+.add-review-card-page textarea:focus {
+    border-color: #d0c3c3;
+    outline: none;
+    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
+}
+
+.add-review-card-page button:hover {
+    background-color: #fae2f3;
+}
+
+.add-review-card-page label {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.add-review-card-page button {
+    align-self: flex-end;
+    background-color: #ffff;
+    color: #333;
+    border: 1px solid #d0c3c3;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s ease;
+}
+
+.rating-star {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+.rating-star input {
+    display: none; 
+}
+
+.rating-star label {
+    font-size: 2rem;
+    color: #d0c3c3;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.rating-star label:hover,
+.rating-star label:hover ~ label {
+    color: #f003a9;
+}
+
+.rating-star input:checked ~ label {
+    color: #f003a9;
+}
