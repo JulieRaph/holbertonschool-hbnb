@@ -9,14 +9,14 @@
 <body>
     <header>
         <div class="logo">
-            <h1>HBnb</h1>
+            <img src="images/logo.png" alt="Logo" class="logo-image">
         </div>
-        <div class="button-login">
-            <p>Login</p>
+        <div>
+            <button type="button" class="login-button">Login</button>
         </div>
     </header>
     <main>
-        <form id="login-form">
+        <form id="login-form" class="login-card">
             <h2>Login</h2>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
@@ -24,7 +24,7 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             
-            <button type="submit">Login</button>
+            <button type="submit" class="login-card-button">Login</button>
         </form>
     </main>
     <script src="scripts.js"></script>
