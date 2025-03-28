@@ -8,21 +8,62 @@
 </head>
 <body>
     <header>
-        <nav>
-            <a href="login.html" id="login-link">Login</a>
-        </nav>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo" class="logo-image">
+        </div>
+        <div>
+            <button type="button" class="login-button">Login</button>
+        </div>
     </header>
     <main>
-        <section id="filter">
+        <h1 class="title-places">Available Places</h1>
+        <section id="filter" class="filter-price">
             <label for="price-filter">Max Price:</label>
             <select id="price-filter">
                 <!-- Options will be populated dynamically -->
             </select>
         </section>
-        <section id="places-list">
+        <section id="places-list" class="announces-container">
+            <form id="places-form" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
+            <form id="places-form1" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
+            <form id="places-form2" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
+            <form id="places-form3" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
+            <form id="places-form4" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
+            <form id="places-form5" class="places-card">
+                <h2>Announce</h2>
+                <p>Price per night</p>
+                <button type="submit" class="view-details-card-button">View Details</button>
+            </form>
             <!-- List of places will be populated dynamically -->
         </section>
     </main>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 HBnb Concept. All rights reserved.</p>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+        </div>
+    </footer>
     <script src="scripts.js"></script>
 </body>
 </html>
