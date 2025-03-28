@@ -326,6 +326,11 @@ footer a {
     margin: 0 auto;
 }
 
+.add-a-review-button:hover {
+    background-color: #fae2f3;
+}
+
+
 /*--------------- Add Review Page ---------------*/
 
 .add-review-page footer {
@@ -336,10 +341,11 @@ footer a {
 }
 
 .add-review-card-page {
-    margin-top: 2rem;
+    max-width: 400px;
+    width: 100%;
+    margin: 3rem auto;
     padding: 1rem;
     border-radius: 10px;
-    width: 100%;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -366,9 +372,10 @@ footer a {
 }
 
 .add-review-card-page label {
-    margin-top: 1rem;
+    margin-top: 2rem;
     margin-bottom: 0.5rem;
     font-weight: bold;
+    font-size: 1.3rem;
 }
 
 .add-review-card-page button {
