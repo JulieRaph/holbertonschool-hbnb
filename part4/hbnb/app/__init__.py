@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -21,6 +22,7 @@ from app.services.utils.db_populate import db_populate
 
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
+    CORS(app, resources={"/api/*":{"origins":"http://127.0.0.1:3000"}}, supports_credentials=True)
     app.config.from_object(config_class)
     authorizations = {
         'token': {
