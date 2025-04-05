@@ -58,18 +58,42 @@ async function fetchPlaces(token) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       }
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des lieux');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Liste des lieux:', data);
     });
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des lieux ' + response.statusText);
+    }
+    
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Erreur:', error);
+  }
+}
+
+
+async function displayPlaces(token) {
+  const placesContainer = document.getElementById('places-list');
+  if(!placesContainer) {
+    console.error('Elément container des lieux est introuvable.');
+    return;
+  }
+  placesContainer.innerHTML = '';
+
+  const places = await fetchPlaces(token);
+
+  if (places && Array.isArray(places)) {
+    places.forEach(place => {
+      const card = document.createElement('form');
+      card.className = 'places-card';
+      card.innerHTML = `
+        <h2>${place.title}</h2>
+        <p>${place.price} per night</p>
+        <button type='submit' class='view-details-card-button'>View details</button>
+        `;
+        placesContainer.appendChild(card);
+      });     
+  } else {
+    placesContainer.innerHTML = "<p>Aucun lieu trouvé.</p>";
   }
 }
 
@@ -84,7 +108,7 @@ function checkAuthentication() {
   } else {
       loginLink.style.display = 'none';
       // Fetch places data if the user is authenticated
-      fetchPlaces(token);
+      displayPlaces(token);
   }
 }
 function getCookie(name) {
