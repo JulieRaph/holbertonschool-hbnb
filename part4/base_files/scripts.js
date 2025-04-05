@@ -40,12 +40,38 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Login failed:', error);
         alert('Login failed: ' + error.message);
       }
-    });
+   });
   }
-
   checkAuthentication();
+
 });
 
+
+/*----------- PLACES -----------*/
+
+
+async function fetchPlaces(token) {
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/v1/places', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des lieux');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Liste des lieux:', data);
+    });
+  } catch (error) {
+    console.error('Erreur:', error);
+  }
+}
 
 /*----------- INDEX -----------*/
 
