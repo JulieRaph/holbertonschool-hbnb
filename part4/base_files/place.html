@@ -8,53 +8,61 @@
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="images/logo.png" alt="Logo" class="logo-image">
-        </div>
-        <div>
-            <button type="button" class="login-button">Login</button>
-        </div>
+        <nav>
+            <a href="/" class="logo">
+                <img src="images/logo.png" alt="Logo" />
+            </a>
+            <a href="login.html" id="login-link">Login</a>
+        </nav>
     </header>
-    <main>
-        <h1 class="title-place">Name Of The Place</h1>
-        <section id="place-details" class="place-info">
-            <!-- Place details will be populated dynamically -->
-            <p>Host</p>
-            <p>Price per night</p>
-            <p>Description</p>
-            <p>Amenities</p>
-        </section>
-        <h2 class="title-h2-place">Reviews</h2>
-        <section id="reviews-list" class="review-container">
-            <!-- Reviews will be populated dynamically -->
-            <form id="review-form" class="review-card">
-                <p>Name</p>
-                <p>Comment</p>
-                <p>Rating</p>
-            </form>
-            <form id="review-form1" class="review-card">
-                <p>Name</p>
-                <p>Comment</p>
-                <p>Rating</p>
-            </form>
-            <form id="review-form2" class="review-card">
-                <p>Name</p>
-                <p>Comment</p>
-                <p>Rating</p>
-            </form>
-        </section>
-        <section>
-        <button type="button" class="add-a-review-button">Add a Review</button>
-        </section>
-    </main>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 HBnb Concept. All rights reserved.</p>
-            <a href="privacy-policy.html">Privacy Policy</a>
-            <a href="terms-of-service.html">Terms of Service</a>
-        </div>
 
+    <main>
+        <section id="place-details">
+            <h1 id="place-name"></h1>
+            <div id="cadre-description">
+                <p id="host-name"></p>
+                <p id="price"></p>
+                <p id="description"></p>
+                <p id="amenities"></p>
+            </div>
+        </section>
+
+        <section id="reviews">
+            <h2>Reviews</h2>
+            <div id="reviews-list">
+                <!-- Reviews will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <h2 id="review-title"></h2>
+        <form id="review-form">
+            <h2>Add a Review</h2>
+            <div class="form-group">
+                <label for="review">Your Review:</label>
+                <textarea id="review" name="review" required></textarea>
+
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating" required>
+                    <option value="" disabled selected>Select rating</option>
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5">5 Stars</option>
+                </select>
+            </div>
+            <div class="submit-button">
+                <button type="submit">Submit Review</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer">
+            <p>&copy; 2024 Your Company. All rights reserved.</p>
+        </div>
     </footer>
+
     <script src="scripts.js"></script>
 </body>
 </html>

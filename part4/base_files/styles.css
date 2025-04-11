@@ -1,3 +1,8 @@
+/* 
+  This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks. 
+  You'll probably need to override some of theese styles.
+*/
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,24 +11,15 @@
 }
 
 body {
-    background-color: #ffff;
+    background-color: #f4f4f4;
     color: #333;
+    padding-bottom: 80px; 
 }
 
 header {
-    background-color: #fae2f3;
+    background-color: hsl(34, 84%, 53%);
     color: #fff;
-    width: 100%;
     padding: 0.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.logo .logo-image {
-    height: 40px;
-    margin: auto;
 }
 
 nav a {
@@ -33,386 +29,201 @@ nav a {
 }
 
 main {
-    padding: 2rem;
-}
-
-footer {
-    background-color: #fae2f3;
-    color: #797979;
-    width: 100%;
     padding: 1rem;
-    text-align: center;
-    bottom: 0;
+    padding-bottom: 80px; 
 }
 
-footer a {
-    color: #797979;
-    font-size: 0.9rem;
+#places-list {
+    display: flex;
+    justify-content: center; /* centre horizontalement */
+    gap: 4rem;               /* espace entre les places */
+    margin-top: 3rem;        /* un peu d'espace au-dessus */
 }
 
-
-/*--------------- Login Page ---------------*/
-
-.login-button {
+.place-card {
+    width: 400px;         /* Largeur fixe des éléments */
+    height: 300px;        /* Hauteur fixe des éléments */
     background-color: #fff;
-    color: #f003a9;
-    border: 1px solid #f003a9;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-}
-
-.login-card {
-    max-width: 400px;
-    width: 100%;
-    margin: 0 auto;
-    margin-top: 3rem;
-    border: 1px solid #d0c3c3;
-    padding: 1rem;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.login-card h2 {
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.login-card label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-}
-
-.login-card input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-.login-card input:focus {
-    border-color: #d0c3c3;
-    outline: none;
-    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
-}
-
-.login-card-button:hover {
-    background-color: #fae2f3;
-}
-
-.login-card-button {
-    align-self: flex-end;
-    background-color: #ffff;
-    color: #333;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    margin-top: 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-}
-
-.login-page footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
-
-
-/*--------------- Index Page ---------------*/
-
-.announces-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
-    padding-top: 60px;
-    margin-bottom: 45px;
     justify-content: center;
+    align-items: center;
+    border-radius: 15px;
 }
 
-.places-card {
-    border: 1px solid #d0c3c3;
-    padding: 1rem;
-    border-radius: 10px;
-    max-width: 275px;
-    min-width: 200px;
-    flex: 1 1 calc(33.333% - 32px);
-    box-sizing: border-box;
+.place-card h1 {
+    text-align: center;        /* Centre le texte à l'intérieur de h1 */
+}
+
+.place-card p {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem      /* Centre le texte à l'intérieur de p */
+}
+
+.view.Detail {
+    width: 150px;  /* Largeur fixe de 200px */
+    margin: 0 auto;
+    padding: 10px;
+    font-size: 1.2rem;
+    text-align: center;
+    display: block;
+    background-color: #f1a90d;
+    color: white;
+    border-radius: 5px;
+    border: none;
+
+}
+
+
+nav {
+    
+    display: flex;
+    justify-content: space-between; /* Aligne le logo à gauche et le lien de login à droite */
+    align-items: center;
+    padding: 0.1rem;
+}
+
+#login-link {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-right: 2rem;
+    font-size: 1.8rem;
+}
+
+#filter {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    
+    align-items: center;
+    margin-bottom: 4rem;
 }
 
-.places-card h2 {
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.places-card p {
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.places-card .view-details-card-button {
-    background-color: #ffff;
-    color: #333;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    margin-top: 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-}
-
-.view-details-card-button:hover {
-    background-color: #fae2f3;
-}
-
-.title-places {
-    text-align: center;
+.filter-title {
     margin-bottom: 2rem;
 }
 
-.filter-price {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.filter-price input:focus {
-    border-color: #d0c3c3;
-    outline: none;
-    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 
-/*--------------- Place Page ---------------*/
-
-.place-info {
-    width: 100%;
-    margin: 0 auto;
-    margin-top: 1.5rem;
-    border: 1px solid #d0c3c3;
-    padding: 1rem;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.place-info p {
-    margin-bottom: 1rem;
-    font-weight: bold;
+#place-name {
+    font-size: 2rem;
+    margin-bottom: 2rem;
     text-align: center;
 }
 
-.place-info p:last-child {
-    margin-bottom: 0;
-}
-
-.title-place {
+#cadre-description {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 2rem;
     text-align: center;
-    margin-top: 1.5rem;
+
 }
 
-.title-h2-place {
-    margin-top: 3rem;
-    text-align: left;
+#Host\: {
+    font-size: 1.5rem;             /* Change la taille de la police */
+    font-weight: normal;           /* Met le texte en normal (pas en gras) */
+    color: #666;                   /* Change la couleur du texte */
+    margin-bottom: 0.5rem;         /* Ajoute un espacement en bas */
 }
-
-.review-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding-top: 20px;
-    margin-bottom: 45px;
-    justify-content: center;
+#Price {
+    font-size: 1.5rem;             /* Change la taille de la police */
+    font-weight: normal;           /* Met le texte en normal (pas en gras) */
+    color: #666;                   /* Change la couleur du texte */
+    margin-bottom: 0.5rem;         /* Ajoute un espacement en bas */
+}
+#Description\: {
+    font-size: 1.5rem;             /* Change la taille de la police */
+    font-weight: normal;           /* Met le texte en normal (pas en gras) */
+    color: #666;                   /* Change la couleur du texte */
+    margin-bottom: 0.5rem;         /* Ajoute un espacement en bas */
+}
+#Amenities\: {
+    font-size: 1.5rem;             /* Change la taille de la police */
+    font-weight: normal;           /* Met le texte en normal (pas en gras) */
+    color: #666;                   /* Change la couleur du texte */
+    margin-bottom: 0.5rem;         /* Ajoute un espacement en bas */
 }
 
 .review-card {
-    border: 1px solid #d0c3c3;
-    padding: 1rem;
-    border-radius: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.review-card p {
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-
-.add-review-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding-top: 20px;
-    margin-bottom: 45px;
-    justify-content: center;
-}
-
-.add-review-card {
-    border: 1px solid #d0c3c3;
-    padding: 1rem;
-    border-radius: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.add-review-card label {
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-
-.add-review-card button {
-    align-self: flex-end;
-    background-color: #ffff;
-    color: #333;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    margin-top: 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-}
-
-.add-review-card button:hover {
-    background-color: #fae2f3;
-}
-
-.add-review-card textarea {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-.add-review-card textarea:focus {
-    border-color: #d0c3c3;
-    outline: none;
-    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
-}
-
-.add-a-review-button {
     background-color: #fff;
-    color: #f003a9;
-    border: 1px solid #f003a9;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-    display: block;
-    margin: 0 auto;
-}
-
-.add-a-review-button:hover {
-    background-color: #fae2f3;
-}
-
-
-/*--------------- Add Review Page ---------------*/
-
-.add-review-page footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
-
-.add-review-card-page {
-    max-width: 400px;
-    width: 100%;
-    margin: 3rem auto;
+    border-radius: 15px;
     padding: 1rem;
-    border-radius: 10px;
+    margin-bottom: 1rem;
+    height: 180px; /* Hauteur fixe des éléments */
+    line-height: 2.7rem;
+
+}
+
+#reviews h2 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.footer {
+    background-color: hsl(34, 84%, 53%);
+    color: #fff;
+    margin-top: 6rem;
+    text-align: center;
+    padding: 1rem;
+    position: fixed; /* Fixe le footer en bas de la page */
+    bottom: 0;      /* Positionne le footer tout en bas */
+    width: 100%;    /* Prend toute la largeur de la page */;
+}
+
+#title {
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+#review-form h2 {
+    margin-top: 2rem;
+}
+
+.form-group {
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.add-review-card-page textarea {
-    width: 100%;
-    padding: 0.5rem;
     margin-bottom: 1rem;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    font-size: 1rem;
 }
 
-
-.add-review-card-page textarea:focus {
-    border-color: #d0c3c3;
-    outline: none;
-    box-shadow: 0 0 3px rgba(65, 65, 65, 0.5);
-}
-
-.add-review-card-page button:hover {
-    background-color: #fae2f3;
-}
-
-.add-review-card-page label {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    font-size: 1.3rem;
-}
-
-.add-review-card-page button {
-    align-self: flex-end;
-    background-color: #ffff;
-    color: #333;
-    border: 1px solid #d0c3c3;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    margin-top: 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s ease;
-}
-
-.rating-star {
+.submit-button {
     display: flex;
-    flex-direction: row-reverse;
     justify-content: center;
+    align-items: center;
+    margin-top: 2.5rem;
+    background-color: #f1a90d;
+    color: white;
+    border-radius: 3px;
+    border: none;
+    height: 50px;
 }
 
-.rating-star input {
-    display: none; 
+
+.submit-button button {
+    background-color: #f1a90d;
+    color: white;
+    border: none;
 }
 
-.rating-star label {
-    font-size: 2rem;
-    color: #d0c3c3;
-    cursor: pointer;
-    transition: color 0.3s;
+label[for="review"] {
+    margin-top: 2.5rem;
 }
 
-.rating-star label:hover,
-.rating-star label:hover ~ label {
-    color: #f003a9;
+#review {
+    width: 100%; /* Prend toute la largeur de son conteneur */
+    height: 50px;
+    padding: 10px;
+    resize: none; /* Empêche le redimensionnement de la zone de texte */
 }
 
-.rating-star input:checked ~ label {
-    color: #f003a9;
+label[for="rating"] {
+    margin-top: 2.5rem;
+}
+
+#rating {
+    width: 100%; /* Prend toute la largeur de son conteneur */
+    height: 40px;
+    padding: 10px;
+    resize: none; /* Empêche le redimensionnement de la zone de texte */
 }

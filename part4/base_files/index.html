@@ -7,54 +7,47 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="page-container">
     <header>
-        <div class="logo">
-            <img src="images/logo.png" alt="Logo" class="logo-image">
-        </div>
-        <div>
-            <button type="button" class="login-button">Login</button>
-        </div>
+        <nav>
+            <a href="/" class="logo">
+                <img src="images/logo.png" alt="Logo" />
+            </a>
+            <a href="login.html" id="login-link">Login</a>
+        </nav>
     </header>
     <main>
-        <h1 class="title-places">Available Places</h1>
-        <section id="filter" class="filter-price">
-            <label for="price-filter">Max Price:</label>
-            <select id="price-filter">
-                <!-- Options will be populated dynamically -->
-            </select>
+        <section id="filter">
+            <div class="filter-title">
+                <h1>Available Places</h1>
+            </div>
+            <div class="filter-row">
+                <label for="price-filter"><strong>Max Price:</strong></label>
+                <select id="price-filter">
+                    <option value="">All</option>
+                    <option value="50">$50</option>
+                    <option value="100">$100</option>
+                    <option value="150">$150</option>
+                    <option value="200">$200</option>
+                </select>
+            </div>
         </section>
-        <section id="places-list" class="announces-container">
-            <form id="places-form" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <form id="places-form1" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <form id="places-form2" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <form id="places-form3" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <form id="places-form4" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <form id="places-form5" class="places-card">
-                <h2>Announce</h2>
-                <p>Price per night</p>
-                <button type="submit" class="view-details-card-button">View Details</button>
-            </form>
-            <!-- List of places will be populated dynamically -->
+        <section id="places-list">
+            <div class="place-card" id="place-1">
+                <h1>Beautiful Beach House</h1>
+                <p>Price: $100</p>
+                <button class="view-detail">View Details</button>
+            </div>
+            <div class="place-card" id="place-2">
+                <h1>Cozy Cabin</h1>
+                <p>Price: $150</p>
+                <button class="view-detail">View Details</button>
+            </div>
+            <div class="place-card" id="place-3">
+                <h1>Modern Apartment</h1>
+                <p>Price: $200</p>
+                <button class="view-detail">View Details</button>
+            </div>
         </section>
     </main>
     <footer>
@@ -65,5 +58,6 @@
         </div>
     </footer>
     <script src="scripts.js"></script>
+</div>
 </body>
 </html>
