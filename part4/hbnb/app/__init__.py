@@ -21,8 +21,12 @@ from app.services.utils.create_admin import create_admin_user
 from app.services.utils.db_populate import db_populate
 
 def create_app(config_class="config.DevelopmentConfig"):
-    app = Flask(__name__)
-    CORS(app, resources={"/api/*":{"origins":"http://127.0.0.1:3000"}}, supports_credentials=True)
+    app = Flask(
+        __name__,
+        static_folder="../../base_files",
+        static_url_path="",
+        )
+    CORS(app)
     app.config.from_object(config_class)
     authorizations = {
         'token': {
