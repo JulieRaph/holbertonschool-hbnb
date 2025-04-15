@@ -67,6 +67,7 @@ async function fetchPlaces(token) {
     return data;
   } catch (error) {
     console.error('Erreur:', error);
+    return [];
   }
 }
 
@@ -91,25 +92,66 @@ async function displayPlaces(token) {
         <button type='submit' class='view-details-card-button'>View details</button>
         `;
         placesContainer.appendChild(card);
-      });     
+      });
+      populatePriceFilter();
   } else {
     placesContainer.innerHTML = "<p>Aucun lieu trouvé.</p>";
   }
 }
 
+//Price Filter
+function populatePriceFilter() {
+  const priceFilter = document.getElementById('price-filter');
+  if (!priceFilter) return;
+
+  priceFilter.innerHTML = '';
+
+  const options = [
+    { value: '0', text: 'All' },
+    { value: '10', text: '10' },
+    { value: '50', text: '50' },
+    { value: '100', text: '100' },
+  ];
+
+  options.forEach(option => {
+    const optionElement = document.createElement('option');
+    optionElement.value = option.value;
+    optionElement.textContent = option.text;
+    priceFilter.appendChild(optionElement);
+  });
+
+priceFilter.addEventListener('change', (event) => {
+  const maxPrice = parseInt(event.target.value);
+  const placeCards = document.querySelectorAll('.places-card');
+
+  placeCards.forEach(card => {
+    const priceText = card.querySelector('p').textContent;
+    const price = parseInt(priceText.match(/\d+/)[0]);
+
+    if (maxPrice === 0 || price <= maxPrice) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+});
+}
 /*----------- INDEX -----------*/
 
 function checkAuthentication() {
   const token = getCookie('token');
-  const loginLink = document.getElementById('login-link');
+  const loginLink = document.querySelector('.login-button');
 
-  if (!token) {
+  if (loginLink) {
+    if (!token) {
       loginLink.style.display = 'block';
-  } else {
-      loginLink.style.display = 'none';
-      // Fetch places data if the user is authenticated
-      displayPlaces(token);
+    } else {
+        loginLink.style.display = 'none';
+        // Fetch places data if the user is authenticated
+        displayPlaces(token);
+    }
   }
+  
 }
 function getCookie(name) {
   const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
