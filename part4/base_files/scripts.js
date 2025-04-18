@@ -43,6 +43,23 @@ document.addEventListener('DOMContentLoaded', () => {
    });
   }
 
+  const reviewForm = document.getElementById('review-form');
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const token = getCookie('token');
+      const placeId = getPlaceIdFromURL();
+      const reviewText = document.getElementById('review').value;
+      const rating = document.querySelector('input[name="rating"]:checked').value;
+
+      const success = await submitReview(token, placeId, reviewText, rating);
+      if (success) {
+        window.location.href = `place.html?id=${placeId}`;
+      }
+    });
+  }
+
   checkAuthentication();
 });
 
@@ -288,7 +305,7 @@ function getPlaceIdFromURL() {
   return params.get('id');
 }
 
-/*----------- INDEX -----------*/
+/*----------- AUTH -----------*/
 
 function checkAuthentication() {
   const token = getCookie('token');
@@ -336,8 +353,51 @@ function checkAuthentication() {
   return isAuthenticated;
 }
 
-
 function getCookie(name) {
   const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
     return v ? v[2] : null;
 }
+
+
+/*----------- Reviews -----------*/
+
+// Handle the response
+function handleResponse(response, successMessage, errorMessage) {
+  if (response.ok) {
+    alert(successMessage);
+    return true;
+  } else {
+    alert(errorMessage);
+    return false;
+  }
+}
+
+
+async function submitReview(token, placeId, reviewText, rating) {
+  // Make a POST request to submit review data
+  try { 
+    const response = await fetch(`http://127.0.0.1:5000/api/v1/reviews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,   // Include the token in the Authorization header
+      },
+      body: JSON.stringify({
+          // Send placeId and reviewText in the request body
+        place_id: placeId,
+        text: reviewText,
+        rating: parseInt(rating)
+      })
+    });
+
+    return handleResponse(
+      response,
+      'Review submitted successfully!',
+      'Failed to submit review'
+    );
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    alert('Error submitting review');
+    return false;
+  }
+} 
