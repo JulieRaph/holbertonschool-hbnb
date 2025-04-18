@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   checkAuthentication();
 
+  if (window.location.pathname.includes('place.html')) {
+    const placeId = getPlaceIdFromURL();
+    if (placeId) {
+      displayPlaceDetails(placeId);
+    }
+  }
 });
 
 
@@ -71,6 +77,28 @@ async function fetchPlaces(token) {
   }
 }
 
+async function fetchPlaceDetails(token, placeId) {
+  // Make a GET request to fetch place details
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/api/v1/places/${placeId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      } 
+    });
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des détails du lieu ' + response.statusText);
+    }
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.error('Erreur:', error);
+    return [];
+  }
+}
+
 
 async function displayPlaces(token) {
   const placesContainer = document.getElementById('places-list');
@@ -91,6 +119,12 @@ async function displayPlaces(token) {
         <p>${place.price} per night</p>
         <button type='submit' class='view-details-card-button'>View details</button>
         `;
+        // placesContainer.appendChild(card);
+
+        card.addEventListener('submit', (event) => {
+          event.preventDefault();
+          window.location.href = `place.html?id=${place.id}`;
+        })
         placesContainer.appendChild(card);
       });
       populatePriceFilter();
@@ -99,7 +133,71 @@ async function displayPlaces(token) {
   }
 }
 
-//Price Filter
+async function displayPlaceDetails(placeId) {
+  // Clear the current content of the place details section
+  const placeDetails = document.getElementById('place-details');
+  const reviewButton = document.querySelector('.add-a-review-button');
+
+  if(!placeDetails) {
+    console.error('Détails du lieu introuvables.');
+    return;
+  }
+  placeDetails.innerHTML = '';
+  // Create elements to display the place details (name, description, price, amenities and reviews)
+  
+  try {
+    
+    const token = getCookie('token');
+    const isAuthenticated = !!token;
+
+    if (reviewButton) {
+      if (isAuthenticated) {
+        reviewButton.style.display = 'block';
+        reviewButton.addEventListener('click', () => {
+          window.location.href = `add_review.html?id=${placeId}`;
+        });
+      } else {
+        reviewButton.style.display = 'none';
+      }
+    }
+
+    const placeData = await fetchPlaceDetails(token, placeId);
+
+    if (placeData) {
+      const titleElement = document.querySelector('.title-place');
+      if (titleElement) {
+        titleElement.textContent = placeData.title;
+      }
+
+      const host = document.createElement('p');
+      host.textContent = `Host: ${placeData.owner.first_name} ${placeData.owner.last_name}`;
+
+      const price = document.createElement('p');
+      price.textContent = `${placeData.price}$ per night`;
+
+      const description = document.createElement('p');
+      description.textContent = placeData.description;
+
+      const amenitiesList = document.createElement('p');
+      const amenitiesText = Array.isArray(placeData.amenities) ? placeData.amenities.map(amenity => amenity.name).join(', ') : 'None listed';
+      amenitiesList.textContent = `Amenities: ${amenitiesText}`;
+
+      placeDetails.appendChild(host);
+      placeDetails.appendChild(price);
+      placeDetails.appendChild(description);
+      placeDetails.appendChild(amenitiesList);
+
+      // displayReviews(place.reviews);
+    } else {
+      placeDetails.innerHTML = "<p>Unable to load place details.</p>";
+    }
+  } catch (error) {
+    console.error('Error displaying place details:', error);
+    placeDetails.innerHTML = "<p>Unable to load place details.</p>";
+  }
+}
+
+//Price filter
 function populatePriceFilter() {
   const priceFilter = document.getElementById('price-filter');
   if (!priceFilter) return;
@@ -136,6 +234,12 @@ priceFilter.addEventListener('change', (event) => {
   });
 });
 }
+
+function getPlaceIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
 /*----------- INDEX -----------*/
 
 function checkAuthentication() {
