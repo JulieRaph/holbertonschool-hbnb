@@ -42,14 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    });
   }
-  checkAuthentication();
 
-  if (window.location.pathname.includes('place.html')) {
-    const placeId = getPlaceIdFromURL();
-    if (placeId) {
-      displayPlaceDetails(placeId);
-    }
-  }
+  checkAuthentication();
 });
 
 
@@ -136,7 +130,7 @@ async function displayPlaces(token) {
 async function displayPlaceDetails(placeId) {
   // Clear the current content of the place details section
   const placeDetails = document.getElementById('place-details');
-  const reviewButton = document.querySelector('.add-a-review-button');
+  // const reviewButton = document.querySelector('.add-a-review-button');
 
   if(!placeDetails) {
     console.error('Détails du lieu introuvables.');
@@ -146,20 +140,7 @@ async function displayPlaceDetails(placeId) {
   // Create elements to display the place details (name, description, price, amenities and reviews)
   
   try {
-    
     const token = getCookie('token');
-    const isAuthenticated = !!token;
-
-    if (reviewButton) {
-      if (isAuthenticated) {
-        reviewButton.style.display = 'block';
-        reviewButton.addEventListener('click', () => {
-          window.location.href = `add_review.html?id=${placeId}`;
-        });
-      } else {
-        reviewButton.style.display = 'none';
-      }
-    }
 
     const placeData = await fetchPlaceDetails(token, placeId);
 
@@ -187,7 +168,7 @@ async function displayPlaceDetails(placeId) {
       placeDetails.appendChild(description);
       placeDetails.appendChild(amenitiesList);
 
-      // displayReviews(place.reviews);
+      displayReviews(placeData.reviews);
     } else {
       placeDetails.innerHTML = "<p>Unable to load place details.</p>";
     }
@@ -196,6 +177,73 @@ async function displayPlaceDetails(placeId) {
     placeDetails.innerHTML = "<p>Unable to load place details.</p>";
   }
 }
+
+function displayReviews(reviews) {
+  const reviewsContainer = document.getElementById('reviews-list');
+  if (!reviewsContainer) {
+    console.error('Element container des avis introuvable.');
+    return;
+  }
+
+  reviewsContainer.innerHTML = '';
+
+  if (!reviews || reviews.length === 0) {
+    reviewsContainer.innerHTML = '<p>No reviews yet.</p>';
+    return;
+  }
+
+    reviews.forEach(review => {
+      const reviewCard = document.createElement('div');
+      reviewCard.className = 'review-card';
+
+      const userName = document.createElement('p');
+      userName.textContent =  '';
+
+      const comment = document.createElement('p');
+      comment.textContent = review.text;
+
+      const rating = document.createElement('p');
+      rating.textContent = `Rating: ${review.rating}/5`;
+
+      reviewCard.appendChild(userName);
+      reviewCard.appendChild(comment);
+      reviewCard.appendChild(rating);
+
+      reviewsContainer.appendChild(reviewCard);
+
+      if (review.user_id) {
+        loadUserName(userName, review.user_id);
+      }
+    });
+  }
+
+async function loadUserName(element, userId) {
+  try {
+    const user = await fetchUserDetails(userId);
+    if (user && user.first_name && user.last_name) {
+      element.textContent = `${user.first_name} ${user.last_name}`;
+    }
+  } catch (error) {
+    console.error('Failed to load user name', error);
+  }
+}
+
+async function fetchUserDetails(userId) {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/api/v1/users/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+  });
+    if (!response.ok) return null;
+    return await response.json();
+} catch (error) {
+    console.error('Error fetching user details:', error);
+    return null;
+  }
+}
+
 
 //Price filter
 function populatePriceFilter() {
@@ -245,18 +293,50 @@ function getPlaceIdFromURL() {
 function checkAuthentication() {
   const token = getCookie('token');
   const loginLink = document.querySelector('.login-button');
+  const isAuthenticated = !!token;
 
   if (loginLink) {
-    if (!token) {
-      loginLink.style.display = 'block';
-    } else {
-        loginLink.style.display = 'none';
-        // Fetch places data if the user is authenticated
+      loginLink.style.display = isAuthenticated ? 'none' : 'block';
+    }
+
+    const currentPath = window.location.pathname;
+    if (currentPath === '/' || currentPath.includes('index.html')) {
+      if (isAuthenticated) {
         displayPlaces(token);
+      }
+    }
+    else if (currentPath.includes('place.html')) {
+      const placeId = getPlaceIdFromURL();
+      if (placeId) {
+        displayPlaceDetails(placeId);
+
+        const reviewButton = document.querySelector('.add-a-review-button');
+        if (reviewButton) {
+          if (isAuthenticated) {
+            reviewButton.style.display = 'block';
+            reviewButton.addEventListener('click', () => {
+              window.location.href = `add_review.html?id=${placeId}`;
+            });
+          } else {
+            reviewButton.style.display = 'none';
+          }
+        }
+      }
+    }
+
+  else if (currentPath.includes('add_review.html')) {
+    if (!isAuthenticated) {
+      const placeId= getPlaceIdFromURL();
+      if (placeId) {
+        window.location.href = `index.html`; 
+      }
     }
   }
-  
+
+  return isAuthenticated;
 }
+
+
 function getCookie(name) {
   const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
     return v ? v[2] : null;
