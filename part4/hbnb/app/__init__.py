@@ -26,7 +26,7 @@ def create_app(config_class="config.DevelopmentConfig"):
         static_folder="../../base_files",
         static_url_path="",
         )
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
     app.config.from_object(config_class)
     authorizations = {
         'token': {
