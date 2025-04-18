@@ -1,6 +1,7 @@
-/*----------- LOGIN -----------*/
-
 document.addEventListener('DOMContentLoaded', () => {
+  
+  checkAuthentication();
+  
   const loginLink = document.querySelector('.login-button');
   if (loginLink) {
     loginLink.addEventListener('click', () => {
@@ -59,8 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  checkAuthentication();
 });
 
 
